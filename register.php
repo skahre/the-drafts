@@ -8,24 +8,43 @@
 
     <?php
     require_once "db/db.php";
+    session_start();
+
+    $error = $_SESSION["error"] ?? "";
+    unset($_SESSION["error"]);
 
     if ($_POST) {
         $hashedPassword = password_hash($_POST["password"], PASSWORD_DEFAULT);
 
-        $newUserId = add_user($_POST["username"], $hashedPassword);
+        $result = add_user($_POST["username"], $hashedPassword);
 
-        echo $newUserId;
+        if ($result instanceof mysqli_sql_exception) {
+            if ($result->getCode() === 1062) {
+                $_SESSION["error"] = "That username is already taken.";
+            } elseif ($result->getCode() === 1406) {
+                $_SESSION["error"] = "Username is too long.";
+            } else {
+                $_SESSION["error"] = "Registration failed. Please try again.";
+            }
+            header("Location: register.php");
+            exit();
+        } else {
+            header("Location: login.php");
+            exit();
+        }
     }
     ?>
 
     <?php require_once "components/header.php"; ?>
+
+    <script src="javascript/validation.js"></script>
 
     <main class="flex flex-1 items-center justify-center p-4 bg-offwhite">
         <div class="bg-white rounded-2xl p-8 w-full max-w-sm flex flex-col gap-6">
 
             <h1 class="text-2xl font-bold text-center">Skapa konto</h1>
 
-            <form method="POST" class="flex flex-col gap-4">
+            <form method="POST" onsubmit="return validatePassword(this)" class="flex flex-col gap-4">
 
                 <div class="flex flex-col gap-1">
                     <label for="username" class="text-sm font-semibold">Användarnamn</label>
@@ -36,6 +55,7 @@
                         required
                         class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary"
                     >
+                    <span class="text-xs text-error"><?php echo $error; ?></span>
                 </div>
 
                 <div class="flex flex-col gap-1">
@@ -61,6 +81,7 @@
                         minlength="6"
                         class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary"
                     >
+                    <span class="text-xs text-error" id="confirm-password-error"></span>
                 </div>
 
                 <button

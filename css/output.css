@@ -391,6 +391,9 @@
   .text-black {
     color: #2e210b;
   }
+  .text-error {
+    color: #ae4641;
+  }
   .text-gray {
     color: #8c8b89;
   }
