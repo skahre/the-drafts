@@ -7,8 +7,13 @@
 <body>
 
     <?php
+    require_once "components/header.php";
     require_once "db/db.php";
-    session_start();
+
+    if (isset($_SESSION["username"])) {
+        header("Location: welcome.php");
+        exit();
+    }
 
     $error = $_SESSION["error"] ?? "";
     unset($_SESSION["error"]);
@@ -29,13 +34,13 @@
             header("Location: register.php");
             exit();
         } else {
-            header("Location: login.php");
+            $_SESSION["username"] = $username;
+            header("Location: welcome.php");
+            $_SESSION["error"] = "Registrering lyckades!";
             exit();
         }
     }
     ?>
-
-    <?php require_once "components/header.php"; ?>
 
     <script src="javascript/validation.js"></script>
 

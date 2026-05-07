@@ -8,24 +8,26 @@
 
     <?php
     require_once "components/header.php";
-
     require_once "db/db.php";
-    session_start();
+
+    if (isset($_SESSION["username"])) {
+        header("Location: welcome.php");
+        exit();
+    }
 
     $error = $_SESSION["error"] ?? "";
     unset($_SESSION["error"]);
 
     if ($_POST) {
-        $hashedPassword = password_hash($_POST["password"], PASSWORD_DEFAULT);
         $username = $_POST["username"];
 
         $user = get_user($username);
 
         if (
             $user !== null &&
-            password_verify($hashedPassword, $user["password"])
+            password_verify($_POST["password"], $user["password"])
         ) {
-            $_SESSION["username"] = $account[0];
+            $_SESSION["username"] = $username;
             header("Location: welcome.php");
             $_SESSION["error"] = "Inloggning lyckades!";
             exit();
