@@ -6,7 +6,14 @@
 </head>
 <body>
 
-    <?php require_once "../components/header.php"; ?>
+    <?php
+    require_once "../components/header.php";
+
+    if (!isset($_SESSION["username"])) {
+        header("Location: /welcome.php");
+        exit();
+    }
+    ?>
 
     <main class="flex flex-1 items-start justify-center p-8 bg-offwhite">
         <div class="bg-white rounded-2xl p-8 w-full max-w-2xl flex flex-col gap-6">
