@@ -8,6 +8,7 @@
 
     <?php
     require_once "components/header.php";
+    require_once "components/password-input.php";
     require_once "db/db.php";
 
     if (isset($_SESSION["username"])) {
@@ -39,6 +40,8 @@
     }
     ?>
 
+    <script src="javascript/validation.js"></script>
+
     <main class="flex flex-1 items-center justify-center p-4 bg-offwhite">
         <div class="bg-white rounded-2xl p-8 w-full max-w-sm flex flex-col gap-6">
 
@@ -57,17 +60,7 @@
                     >
                 </div>
 
-                <div class="flex flex-col gap-1">
-                    <label for="password" class="text-sm font-semibold">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                        minlength="6"
-                        class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary"
-                    >
-                </div>
+                <?php password_input('password', 'Password'); ?>
                 <span class="text-xs text-error"><?php echo $error; ?></span>
 
                 <button
