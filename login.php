@@ -20,7 +20,7 @@
     unset($_SESSION["error"]);
 
     if ($_POST) {
-        $username = $_POST["username"];
+        $username = strtolower($_POST["username"]);
 
         $user = get_user($username);
 

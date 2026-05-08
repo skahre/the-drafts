@@ -22,7 +22,7 @@
     if ($_POST) {
         $hashedPassword = password_hash($_POST["password"], PASSWORD_DEFAULT);
 
-        $result = add_user($_POST["username"], $hashedPassword);
+        $result = add_user(strtolower($_POST["username"]), $hashedPassword);
 
         if ($result instanceof mysqli_sql_exception) {
             if ($result->getCode() === 1062) {
