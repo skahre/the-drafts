@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <link rel="stylesheet" href="../css/output.css">
-    <title>BLOGGEN</title>
+    <title>New Post | The Drafts</title>
 </head>
 <body>
 
@@ -11,7 +11,7 @@
     <main class="flex flex-1 items-start justify-center p-8 bg-offwhite">
         <div class="bg-white rounded-2xl p-8 w-full max-w-2xl flex flex-col gap-6">
 
-            <h1 class="text-2xl font-bold">Nytt inlägg</h1>
+            <h1 class="text-2xl font-bold">New post</h1>
 
             <form 
                 method="POST" 
@@ -21,7 +21,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-sm font-semibold">
-                        Titel
+                        Title
                     </label>
                     <input
                         type="text"
@@ -33,7 +33,7 @@
 
                 <div class="flex flex-col gap-1">
                     <span class="text-sm font-semibold">
-                        Bild
+                        Image
                     </span>
                     <div 
                         id="drop-zone" 
@@ -53,10 +53,10 @@
                             <line x1="12" y1="3" x2="12" y2="15"/>
                         </svg>
                         <p class="text-sm text-gray">
-                            Dra och släpp en bild här, eller
+                            Drag and drop an image here, or
                         </p>
                         <label class="shrink-0 flex items-center gap-2 bg-primary font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer text-sm">
-                            Välj fil
+                            Choose file
                             <input
                                 id="image-input"
                                 type="file"
@@ -67,17 +67,17 @@
                             >
                         </label>
                         <span id="file-name" class="text-sm text-gray truncate">
-                            Ingen fil vald
+                            No file chosen
                         </span>
                     </div>
                     <span class="text-xs text-gray">
-                        Valfritt
+                        Optional
                     </span>
                 </div>
                 <script>
                     const zone = document.getElementById('drop-zone');
                     function setFile(file) {
-                        document.getElementById('file-name').textContent = file ? file.name : 'Ingen fil vald';
+                        document.getElementById('file-name').textContent = file ? file.name : 'No file chosen';
                     }
                     zone.addEventListener('dragover', e => {
                         e.preventDefault();
@@ -100,7 +100,7 @@
                 </script>
 
                 <div class="flex flex-col gap-1">
-                    <label class="text-sm font-semibold">Innehåll</label>
+                    <label class="text-sm font-semibold">Content</label>
                     <textarea
                         name="content"
                         rows="12"
@@ -114,13 +114,13 @@
                         href="<?= BASE ?>/admin/dashboard.php" 
                         class="px-4 py-2 rounded-lg border border-gray text-sm hover:bg-offwhite transition-colors"
                     >
-                        Avbryt
+                        Cancel
                     </a>
                     <button 
                         type="submit" 
                         class="bg-primary font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer text-sm"
                     >
-                        Publicera
+                        Publish
                     </button>
                 </div>
 

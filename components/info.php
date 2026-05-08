@@ -13,6 +13,6 @@
         </div>
     </div>
     <p class="text-sm text-gray"><?php echo htmlspecialchars(
-        $info_user["bio"] ?? "Ingen beskrivning ännu.",
+        $info_user["bio"] ?? "No description yet.",
     ); ?></p>
 </div>

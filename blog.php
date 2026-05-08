@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <link rel="stylesheet" href="css/output.css">
-    <title>BLOGG</title>
+    <title>Blog | The Drafts</title>
 </head>
 <body>
 

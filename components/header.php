@@ -10,7 +10,7 @@ define("BASE", "/PROJEKT");
         >
             Home
         </button>
-        <span class="text-xl font-bold tracking-widest">BLOGGEN</span>
+        <span class="text-xl font-bold tracking-widest">THE DRAFTS</span>
         <span class="flex gap-2">
             <?php if (isset($_SESSION["username"])): ?>
                 <button 
@@ -23,14 +23,14 @@ define("BASE", "/PROJEKT");
                     class="px-4 py-2 rounded-lg border border-gray cursor-pointer hover:bg-offwhite transition-colors"
                     onClick="window.location.href=`<?= BASE ?>/utils/logout.php`"
                 >
-                    Logga ut
+                    Sign out
                 </button>
             <?php else: ?>
                 <button
                     class="px-4 py-2 rounded-lg border border-gray cursor-pointer hover:bg-offwhite transition-colors"
                     onClick="window.location.href=`<?= BASE ?>/login.php`"
                 >
-                    Login
+                    Log in
                 </button>
                 <button
                     class="px-4 py-2 rounded-lg bg-primary cursor-pointer hover:opacity-90 transition-opacity font-semibold"

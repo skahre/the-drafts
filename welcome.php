@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <link rel="stylesheet" href="css/output.css">
-    <title>BLOGG</title>
+    <title>The Drafts</title>
 </head>
 <body>
 
@@ -14,7 +14,7 @@
             <div class="w-full">
                 <div class="flex flex-col gap-4 bg-white p-8 rounded-2xl">
                     <h2 class="text-xl font-bold">Title</h2>
-                    <p class="text-sm text-gray">26 May 2026</p>
+                    <p class="text-sm text-gray">2026-05-05</p>
                     <p class="truncate-overflow blog-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eu nulla vitae dolor imperdiet
                         molestie a sed neque. Pellentesque leo ligula, imperdiet in lectus non, scelerisque vehicula
                         metus. Aenean vehicula volutpat consectetur. Nam id egestas orci. Morbi velit sapien,
@@ -32,7 +32,7 @@
         <div class="flex shrink-0 bg-white w-1/5 h-[80lvh] rounded-2xl">
             <ul class="list-none p-2 w-full flex flex-col gap-1">
                 <li class="border border-gray px-2 py-4 rounded-lg flex justify-center"><a href="blog.php">Example Blogger</a></li>
-                <li class="border border-gray px-2 py-4 rounded-lg flex justify-center">Din Mamma</li>
+                <li class="border border-gray px-2 py-4 rounded-lg flex justify-center">Sandra Kåhre</li>
                 <li class="border border-gray px-2 py-4 rounded-lg flex justify-center">Hell YEZZ</li>
             </ul>
         </div>

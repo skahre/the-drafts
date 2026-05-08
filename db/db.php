@@ -35,7 +35,7 @@ if (file_exists($serverPath)) {
 } elseif (file_exists($localPath)) {
     require_once $localPath;
 } else {
-    die("Kunde inte hitta db_credentials.php.");
+    die("Could not find db_credentials.php.");
 }
 function connect()
 {

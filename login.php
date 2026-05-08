@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <link rel="stylesheet" href="css/output.css">
-    <title>BLOGGEN</title>
+    <title>Log In | The Drafts</title>
 </head>
 <body>
 
@@ -29,11 +29,11 @@
         ) {
             $_SESSION["username"] = $username;
             header("Location: admin/dashboard.php");
-            $_SESSION["error"] = "Inloggning lyckades!";
+            $_SESSION["error"] = "Login failed";
             exit();
         }
 
-        $_SESSION["error"] = "Incorrect username or password.";
+        $_SESSION["error"] = "Incorrect username or password";
         header("Location: login.php");
         exit();
     }
@@ -42,12 +42,12 @@
     <main class="flex flex-1 items-center justify-center p-4 bg-offwhite">
         <div class="bg-white rounded-2xl p-8 w-full max-w-sm flex flex-col gap-6">
 
-            <h1 class="text-2xl font-bold text-center">Logga in</h1>
+            <h1 class="text-2xl font-bold text-center">Log in</h1>
 
             <form method="POST" class="flex flex-col gap-4">
 
                 <div class="flex flex-col gap-1">
-                    <label for="username" class="text-sm font-semibold">Användarnamn</label>
+                    <label for="username" class="text-sm font-semibold">Username</label>
                     <input
                         type="text"
                         id="username"
@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label for="password" class="text-sm font-semibold">Lösenord</label>
+                    <label for="password" class="text-sm font-semibold">Password</label>
                     <input
                         type="password"
                         id="password"
@@ -74,13 +74,13 @@
                     type="submit"
                     class="bg-primary font-semibold py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer mt-2"
                 >
-                    Logga in
+                    Log in
                 </button>
 
             </form>
 
             <p class="text-sm text-center text-gray">
-                Inget konto? <a href="register.php" class="text-black font-semibold underline">Registrera dig</a>
+                Don't have an account? <a href="register.php" class="text-black font-semibold underline">Sign up</a>
             </p>
 
         </div>
