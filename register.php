@@ -11,7 +11,7 @@
     require_once "db/db.php";
 
     if (isset($_SESSION["username"])) {
-        header("Location: welcome.php");
+        header("Location: admin/dashboard.php");
         exit();
     }
 
@@ -35,7 +35,7 @@
             exit();
         } else {
             $_SESSION["username"] = $username;
-            header("Location: welcome.php");
+            header("Location: admin/dashboard.php");
             $_SESSION["error"] = "Registrering lyckades!";
             exit();
         }

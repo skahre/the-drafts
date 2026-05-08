@@ -11,7 +11,7 @@
     require_once "db/db.php";
 
     if (isset($_SESSION["username"])) {
-        header("Location: welcome.php");
+        header("Location: admin/dashboard.php");
         exit();
     }
 
@@ -28,7 +28,7 @@
             password_verify($_POST["password"], $user["password"])
         ) {
             $_SESSION["username"] = $username;
-            header("Location: welcome.php");
+            header("Location: admin/dashboard.php");
             $_SESSION["error"] = "Inloggning lyckades!";
             exit();
         }
