@@ -8,11 +8,14 @@
 
     <?php
     require_once "../components/header.php";
+    require_once "../db/db.php";
 
     if (!isset($_SESSION["username"])) {
         header("Location: /welcome.php");
         exit();
     }
+
+    $posts = get_posts_by_user($_SESSION["user_id"]);
     ?>
 
     <main class="flex flex-row p-4 gap-4 flex-1 bg-offwhite">
@@ -24,6 +27,7 @@
                 "name" => $_SESSION["name"] ?? $_SESSION["username"],
                 "username" => $_SESSION["username"],
                 "bio" => null,
+                "id" => $_SESSION["user_id"],
             ];
             require_once "../components/info.php";
             ?>
@@ -80,30 +84,42 @@
 
             <div class="flex flex-col gap-3">
 
-                <!-- Placeholder post row — replace with PHP loop over DB results -->
-                <div class="bg-white rounded-2xl p-5 flex items-center justify-between gap-4">
-                    <div class="flex flex-col gap-1 flex-1 min-w-0">
-                        <p class="font-semibold truncate">Example Post</p>
-                        <p class="text-xs text-gray">2026-05-07</p>
-                    </div>
-                    <div class="flex gap-2 shrink-0">
-                        <a 
-                        href="<?= BASE ?>/admin/edit-post.php?id=1" 
-                        class="px-3 py-1.5 rounded-lg border border-gray text-sm hover:bg-offwhite transition-colors"
-                        >
-                            Edit
-                        </a>
-                        <form method="POST">
-                            <input type="hidden" name="delete_id" value="1">
-                            <button 
-                            type="submit" 
-                            class="px-3 py-1.5 rounded-lg border border-gray text-red-600 text-sm hover:bg-red-50 transition-colors cursor-pointer"
+                <?php foreach ($posts as $post): ?>
+                    <div class="bg-white rounded-2xl p-5 flex items-center justify-between gap-4">
+                        <div class="flex flex-col gap-1 flex-1 min-w-0">
+                            <p class="font-semibold truncate"><?= htmlspecialchars(
+                                $post["title"],
+                            ) ?></p>
+                            <p class="text-sm truncate-overflow blog-text"><?= htmlspecialchars(
+                                $post["content"],
+                            ) ?>...</p>
+                            <p class="text-xs text-gray"><?= $post[
+                                "created_at"
+                            ] ?></p>
+                        </div>
+                        <div class="flex gap-2 shrink-0">
+                            <a 
+                            href="<?= BASE ?>/admin/edit-post.php?id=<?= $post[
+    "id"
+] ?>" 
+                            class="px-3 py-1.5 rounded-lg border border-gray text-sm hover:bg-offwhite transition-colors"
                             >
-                                Remove
-                            </button>
-                        </form>
+                                Edit
+                            </a>
+                            <form method="POST">
+                                <input type="hidden" name="delete_id" value="<?= $post[
+                                    "id"
+                                ] ?>">
+                                <button 
+                                    type="submit" 
+                                    class="px-3 py-1.5 rounded-lg border border-gray text-red-600 text-sm hover:bg-red-50 transition-colors cursor-pointer"
+                                >
+                                    Remove
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                    <?php endforeach; ?>
 
                 <div class="bg-white rounded-2xl p-8 text-center text-gray text-sm">
                     No more posts

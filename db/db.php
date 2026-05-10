@@ -258,3 +258,24 @@ function add_image($post_id, $filename)
 
     mysqli_stmt_close($stmt);
 }
+
+function get_posts_by_user($user_id)
+{
+    $connection = connect();
+
+    $sql = "SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+
+    $rows = get_result($stmt);
+
+    mysqli_stmt_close($stmt);
+
+    return $rows;
+}
