@@ -8,10 +8,62 @@
 
     <?php
     require_once "../components/header.php";
+    require_once "../components/icons.php";
+    require_once "../db/db.php";
+    require_once "../utils/fileValidation.php";
 
     if (!isset($_SESSION["username"])) {
         header("Location: /welcome.php");
         exit();
+    }
+
+    $imageError = $_SESSION["error"] ?? "";
+    unset($_SESSION["error"]);
+
+    $saved = $_SESSION["form"] ?? [];
+    unset($_SESSION["form"]);
+
+    if ($_POST) {
+        $title = $_POST["title"];
+        $image = $_FILES["image-input"] ?? null;
+        $content = $_POST["content"];
+
+        if ($title !== null && $content !== null) {
+        }
+
+        if ($image && $image["error"] === 0) {
+            $maxBytes = 3 * 1024 * 1024;
+            if ($image["size"] > $maxBytes) {
+                $_SESSION["error"] = "Image must be under 3 MB.";
+                $_SESSION["form"] = ["title" => $title, "content" => $content];
+                header("Location: new-post.php");
+                exit();
+            } else {
+                $fileExtension = validate_image_type($image);
+                if ($fileExtension === false) {
+                    $_SESSION["error"] = "Only JPG and PNG images are allowed.";
+
+                    $_SESSION["form"] = [
+                        "title" => $title,
+                        "content" => $content,
+                    ];
+
+                    header("Location: new-post.php");
+
+                    exit();
+                }
+            }
+
+            $tmp_file = $image["tmp_name"];
+            $upload_dir = __DIR__ . "/../uploads/";
+            $filename = bin2hex(random_bytes(16)) . "." . $fileExtension;
+            if (move_uploaded_file($tmp_file, $upload_dir . $filename)) {
+                echo "Filen har laddats upp.";
+            } else {
+                $_SESSION["error"] =
+                    "Something went wrong while uploading the file.";
+            }
+        }
     }
     ?>
 
@@ -34,6 +86,7 @@
                         type="text"
                         name="title"
                         required
+                        value="<?= htmlspecialchars($saved["title"] ?? "") ?>"
                         class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary"
                     >
                 </div>
@@ -42,50 +95,109 @@
                     <span class="text-sm font-semibold">
                         Image
                     </span>
-                    <div 
-                        id="drop-zone" 
+                    <div
+                        id="drop-zone"
                         class="flex flex-col items-center gap-3 border-2 border-dashed border-gray rounded-lg px-4 py-6 bg-offwhite transition-colors text-center"
                     >
-                        <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            class="w-6 h-6 text-gray" 
-                            viewBox="0 0 24 24" fill="none" 
-                            stroke="currentColor" 
-                            stroke-width="2" 
-                            stroke-linecap="round" 
-                            stroke-linejoin="round"
-                        >
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="17 8 12 3 7 8"/>
-                            <line x1="12" y1="3" x2="12" y2="15"/>
-                        </svg>
-                        <p class="text-sm text-gray">
-                            Drag and drop an image here, or
-                        </p>
+                        <?= icon("upload", "w-6 h-6 text-black") ?>
+                        <div>
+                            <p class="text-sm text-black">
+                                Choose file or drag & drop it here
+                            </p>
+                            <p class="text-xs text-gray">
+                                JPG and PNG formats up to 3 MB
+                            </p>
+                        </div>
                         <label class="shrink-0 flex items-center gap-2 bg-primary font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer text-sm">
-                            Choose file
+                            Browse files
                             <input
                                 id="image-input"
                                 type="file"
-                                name="image"
                                 accept="image/*"
                                 class="sr-only"
-                                onchange="setFile(this.files[0])"
+                                name="image-input"
                             >
                         </label>
-                        <span id="file-name" class="text-sm text-gray truncate">
-                            No file chosen
-                        </span>
                     </div>
                     <span class="text-xs text-gray">
                         Optional
                     </span>
+                    <div id="file-preview" class="hidden items-center gap-3 border rounded-lg px-4 py-3 bg-white">
+                        <?= icon("image", "w-8 h-8 text-gray shrink-0", [
+                            "stroke-width" => "1.5",
+                        ]) ?>
+                        <div class="flex-1 min-w-0">
+                            <p id="preview-name" class="text-sm font-semibold truncate"></p>
+                            <p id="preview-size" class="text-xs text-gray"></p>
+                        </div>
+                        <button
+                            type="button"
+                            id="remove-file"
+                            class="shrink-0 p-2 rounded-lg border border-gray hover:bg-offwhite transition-colors cursor-pointer"
+                        >
+                            <?= icon("trash", "w-4 h-4 text-gray") ?>
+                        </button>
+                    </div>
+                    <div id="image-error" class="<?= $imageError
+                        ? "flex"
+                        : "hidden" ?> items-center gap-1.5 text-xs text-error">
+                        <?= icon("alert-circle", "w-4 h-4 shrink-0") ?>
+                        <span id="error-text"><?= htmlspecialchars(
+                            $imageError,
+                        ) ?></span>
+                    </div>
                 </div>
+
+                <script src="../javascript/validation.js"></script>
                 <script>
                     const zone = document.getElementById('drop-zone');
-                    function setFile(file) {
-                        document.getElementById('file-name').textContent = file ? file.name : 'No file chosen';
+                    const input = document.getElementById('image-input');
+                    const filePreview = document.getElementById('file-preview');
+                    const errorEl = document.getElementById('image-error');
+                    const errorText = document.getElementById('error-text');
+
+                    const maxBytes = 3 * 1024 * 1024;
+                    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+                    function formatSize(bytes) {
+                        if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+                        return Math.round(bytes / 1024) + ' KB';
                     }
+
+                    function showError(msg) {
+                        errorText.textContent = msg;
+                        errorEl.classList.remove('hidden');
+                        errorEl.classList.add('flex');
+                    }
+
+                    function hideError() {
+                        errorEl.classList.add('hidden');
+                        errorEl.classList.remove('flex');
+                    }
+
+                    function setFile(file) {
+                        if (!file) {
+                            filePreview.classList.add('hidden');
+                            filePreview.classList.remove('flex');
+                            hideError();
+                            return;
+                        }
+                        document.getElementById('preview-name').textContent = file.name;
+                        document.getElementById('preview-size').textContent = formatSize(file.size);
+                        filePreview.classList.remove('hidden');
+                        filePreview.classList.add('flex');
+                        const error = validateFile(file);
+                        if (error) {
+                            filePreview.classList.add('border-error');
+                            filePreview.classList.remove('border-gray');
+                            showError(error);
+                        } else {
+                            filePreview.classList.remove('border-error');
+                            filePreview.classList.add('border-gray');
+                            hideError();
+                        }
+                    }
+
                     zone.addEventListener('dragover', e => {
                         e.preventDefault();
                         zone.classList.add('border-primary', 'bg-white');
@@ -98,11 +210,25 @@
                         zone.classList.remove('border-primary', 'bg-white');
                         const file = e.dataTransfer.files[0];
                         if (!file) return;
-                        const input = document.getElementById('image-input');
                         const dt = new DataTransfer();
                         dt.items.add(file);
                         input.files = dt.files;
                         setFile(file);
+                    });
+
+                    input.addEventListener('change', () => setFile(input.files[0]));
+
+                    document.getElementById('remove-file').addEventListener('click', () => {
+                        input.value = '';
+                        setFile(null);
+                    });
+
+                    document.querySelector('form').addEventListener('submit', e => {
+                        const error = validateFile(input.files[0]);
+                        if (error) {
+                            e.preventDefault();
+                            setFile(input.files[0]);
+                        }
                     });
                 </script>
 
@@ -113,7 +239,7 @@
                         rows="12"
                         required
                         class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary resize-none"
-                    ></textarea>
+                    ><?= htmlspecialchars($saved["content"] ?? "") ?></textarea>
                 </div>
 
                 <div class="flex gap-3 justify-end">

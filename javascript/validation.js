@@ -3,7 +3,9 @@ function togglePassword(inputId, btn) {
   const isHidden = input.type === "password";
   input.type = isHidden ? "text" : "password";
   btn.querySelector("[data-eye='open']").classList.toggle("hidden", isHidden);
-  btn.querySelector("[data-eye='closed']").classList.toggle("hidden", !isHidden);
+  btn
+    .querySelector("[data-eye='closed']")
+    .classList.toggle("hidden", !isHidden);
 }
 
 function validatePassword(form) {
@@ -17,4 +19,14 @@ function validatePassword(form) {
   } else {
     return true;
   }
+}
+
+function validateFile(file) {
+  const maxBytes = 3 * 1024 * 1024;
+  const allowedTypes = ["image/jpeg", "image/png"];
+  if (!file) return null;
+  if (file.size > maxBytes) return "Image must be under 3 MB.";
+  if (!allowedTypes.includes(file.type))
+    return "Only JPG and PNG images are allowed.";
+  return null;
 }
