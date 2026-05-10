@@ -24,12 +24,9 @@
     unset($_SESSION["form"]);
 
     if ($_POST) {
-        $title = $_POST["title"];
+        $title = $_POST["title"] ?? "";
         $image = $_FILES["image-input"] ?? null;
-        $content = $_POST["content"];
-
-        if ($title !== null && $content !== null) {
-        }
+        $content = $_POST["content"] ?? "";
 
         if ($image && $image["error"] === 0) {
             $maxBytes = 3 * 1024 * 1024;
@@ -57,12 +54,46 @@
             $tmp_file = $image["tmp_name"];
             $upload_dir = __DIR__ . "/../uploads/";
             $filename = bin2hex(random_bytes(16)) . "." . $fileExtension;
-            if (move_uploaded_file($tmp_file, $upload_dir . $filename)) {
-                echo "Filen har laddats upp.";
-            } else {
+            if (!move_uploaded_file($tmp_file, $upload_dir . $filename)) {
                 $_SESSION["error"] =
                     "Something went wrong while uploading the file.";
+                header("Location: new-post.php");
+
+                exit();
             }
+        }
+        if ($title !== "" && $content !== "") {
+            $postId = add_post($_SESSION["user_id"], $title, $content);
+            if ($postId instanceof Exception) {
+                $_SESSION["error"] =
+                    "Something went wrong while saving the post.";
+                header("Location: new-post.php");
+                exit();
+            }
+            if ($image && $image["error"] === 0) {
+                add_image($postId, $filename);
+            }
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            $upload_errors = [
+                0 => "No error, the file uploaded successfully.",
+                1 => "Image too big (PHP limit).",
+                2 => "Image too big (HTML form limit).",
+                3 => "Image only partially uploaded.",
+                4 => "No file selected.",
+                6 => "Temporary folder missing.",
+                7 => "Failed to write to disk.",
+                8 => "Uppladdningen stoppad.",
+            ];
+            $_SESSION["error"] = "Something went wrong while uploading image.";
+
+            error_log(
+                $upload_errors[$image["error" ?? 0]] ?? "Unknown upload error.",
+            );
+
+            header("Location: new-post.php");
+            exit();
         }
     }
     ?>
@@ -80,7 +111,7 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="text-sm font-semibold">
-                        Title
+                        Title<span class="text-error">*</span>
                     </label>
                     <input
                         type="text"
@@ -119,9 +150,6 @@
                             >
                         </label>
                     </div>
-                    <span class="text-xs text-gray">
-                        Optional
-                    </span>
                     <div id="file-preview" class="hidden items-center gap-3 border rounded-lg px-4 py-3 bg-white">
                         <?= icon("image", "w-8 h-8 text-gray shrink-0", [
                             "stroke-width" => "1.5",
@@ -155,9 +183,6 @@
                     const filePreview = document.getElementById('file-preview');
                     const errorEl = document.getElementById('image-error');
                     const errorText = document.getElementById('error-text');
-
-                    const maxBytes = 3 * 1024 * 1024;
-                    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
                     function formatSize(bytes) {
                         if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
@@ -233,7 +258,7 @@
                 </script>
 
                 <div class="flex flex-col gap-1">
-                    <label class="text-sm font-semibold">Content</label>
+                    <label class="text-sm font-semibold">Content<span class="text-error">*</span></label>
                     <textarea
                         name="content"
                         rows="12"

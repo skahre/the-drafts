@@ -36,6 +36,7 @@
             exit();
         } else {
             $_SESSION["username"] = $username;
+            $_SESSION["user_id"] = $user["id"];
             header("Location: admin/dashboard.php");
             $_SESSION["error"] = "Registrering lyckades!";
             exit();
@@ -64,8 +65,17 @@
                     <span class="text-xs text-error"><?php echo $error; ?></span>
                 </div>
 
-                <?php password_input('password', 'Password', '6 or more characters'); ?>
-                <?php password_input('password_confirm', 'Confirm password', null, 'confirm-password-error'); ?>
+                <?php password_input(
+                    "password",
+                    "Password",
+                    "6 or more characters",
+                ); ?>
+                <?php password_input(
+                    "password_confirm",
+                    "Confirm password",
+                    null,
+                    "confirm-password-error",
+                ); ?>
 
                 <button
                     type="submit"

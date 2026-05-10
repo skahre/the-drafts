@@ -29,8 +29,8 @@
             password_verify($_POST["password"], $user["password"])
         ) {
             $_SESSION["username"] = $username;
+            $_SESSION["user_id"] = $user["id"];
             header("Location: admin/dashboard.php");
-            $_SESSION["error"] = "Login failed";
             exit();
         }
 

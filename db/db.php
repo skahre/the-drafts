@@ -208,3 +208,53 @@ function get_result($stmt)
     // Om inga rader finns returneras en tom array []
     return $rows;
 }
+
+function add_post($user_id, $title, $content)
+{
+    $connection = connect();
+
+    $sql = "INSERT INTO posts (user_id, title, content) VALUES (?, ?, ?)";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "iss", $user_id, $title, $content);
+
+    try {
+        mysqli_stmt_execute($stmt);
+    } catch (mysqli_sql_exception $e) {
+        mysqli_stmt_close($stmt);
+        return $e;
+    }
+
+    $newId = mysqli_insert_id($connection);
+
+    mysqli_stmt_close($stmt);
+
+    return $newId;
+}
+
+function add_image($post_id, $filename)
+{
+    $connection = connect();
+
+    $sql = "INSERT INTO images (post_id, filename) VALUES (?, ?)";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "is", $post_id, $filename);
+
+    try {
+        mysqli_stmt_execute($stmt);
+    } catch (mysqli_sql_exception $e) {
+        mysqli_stmt_close($stmt);
+        return $e;
+    }
+
+    mysqli_stmt_close($stmt);
+}
