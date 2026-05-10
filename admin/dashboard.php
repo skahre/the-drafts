@@ -121,7 +121,7 @@
                     </div>
                     <?php endforeach; ?>
 
-                <div class="bg-white rounded-2xl p-8 text-center text-gray text-sm">
+                <div class="flex flex-col bg-white rounded-2xl p-8 text-center text-gray text-sm">
                     No more posts
                     <a 
                         href="<?= BASE ?>/admin/new-post.php" 

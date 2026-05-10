@@ -279,3 +279,24 @@ function get_posts_by_user($user_id)
 
     return $rows;
 }
+
+function get_all_posts()
+{
+    $connection = connect();
+
+    $sql =
+        "SELECT posts.*, users.username, COALESCE(users.title, users.username) AS blog_title FROM posts JOIN users ON posts.user_id = users.id ORDER BY posts.created_at DESC";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_execute($stmt);
+
+    $rows = get_result($stmt);
+
+    mysqli_stmt_close($stmt);
+
+    return $rows;
+}
