@@ -8,6 +8,7 @@
 
     <?php
     require_once "components/header.php";
+    require_once "components/icons.php";
     require_once "db/db.php";
 
     $posts = get_all_posts();
@@ -19,17 +20,23 @@
             <div class="w-full flex flex-col items-center gap-4">
                 <?php foreach ($posts as $post): ?>
                     <div class="w-full flex flex-col bg-white rounded-2xl p-8 gap-4">
-                        <h2 class="text-xl font-bold"><?= htmlspecialchars(
-                            $post["title"],
-                        ) ?></h2>
-                        <p class="text-sm text-gray"><?= date(
-                            "Y-m-d",
-                            strtotime($post["created_at"]),
-                        ) ?>
-                        </p>
-                        <p class="truncate-overflow blog-text text-sm"><?= htmlspecialchars(
-                            $post["content"],
-                        ) ?>...</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-full bg-offwhite border border-gray flex items-center justify-center text-lg font-bold shrink-0">
+                                    <?= strtoupper(substr($post["blog_title"], 0, 1)) ?>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray">Posted by <strong><?= htmlspecialchars($post["blog_title"]) ?></strong></p>
+                                    <p class="text-xs text-gray">@<?= htmlspecialchars($post["username"]) ?></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-sm text-gray shrink-0">
+                                <?= icon("calendar", "w-4 h-4") ?>
+                                <?= date("Y-m-d", strtotime($post["created_at"])) ?>
+                            </div>
+                        </div>
+                        <h2 class="text-xl font-bold"><?= htmlspecialchars($post["title"]) ?></h2>
+                        <p class="truncate-overflow blog-text text-sm"><?= htmlspecialchars($post["content"]) ?>...</p>
                     </div>
                 <?php endforeach; ?>
             </div>
