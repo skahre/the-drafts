@@ -11,19 +11,24 @@
     require_once "components/password-input.php";
     require_once "db/db.php";
 
-    if (isset($_SESSION["username"])) {
+    // Redirect to dashboard if already logged in
+    if (isset($_SESSION["username"]) && isset($_SESSION["user_id"])) {
         header("Location: admin/dashboard.php");
         exit();
     }
 
+    // Initialize error message and clear it from session
     $error = $_SESSION["error"] ?? "";
     unset($_SESSION["error"]);
 
     if ($_POST) {
+        // Only save lowercase usernames in db
         $username = strtolower($_POST["username"]);
 
+        // Fetch user from database
         $user = get_user_by_name($username);
 
+        // If user exists and password is correct, log in and redirect to dashboard
         if (
             $user !== null &&
             password_verify($_POST["password"], $user["password"])
@@ -34,13 +39,12 @@
             exit();
         }
 
+        // If login fails, set error message and redirect back to login page
         $_SESSION["error"] = "Incorrect username or password";
         header("Location: login.php");
         exit();
     }
     ?>
-
-    <script src="javascript/validation.js"></script>
 
     <main class="flex flex-1 items-center justify-center p-4 bg-offwhite">
         <div class="bg-white rounded-2xl p-8 w-full max-w-sm flex flex-col gap-6">
@@ -60,6 +64,7 @@
                     >
                 </div>
 
+                <!-- Reusable password input component -->
                 <?php password_input("password", "Password"); ?>
                 <span class="text-xs text-error"><?php echo $error; ?></span>
 

@@ -511,6 +511,9 @@
   .text-red-600 {
     color: var(--color-red-600);
   }
+  .lowercase {
+    text-transform: lowercase;
+  }
   .underline {
     text-decoration-line: underline;
   }
