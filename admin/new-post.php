@@ -12,7 +12,7 @@
     require_once "../db/db.php";
     require_once "../utils/fileValidation.php";
 
-    if (!isset($_SESSION["username"])) {
+    if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
         header("Location: /welcome.php");
         exit();
     }
