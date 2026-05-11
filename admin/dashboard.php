@@ -8,12 +8,43 @@
 
     <?php
     require_once "../components/header.php";
+    require_once "../components/icons.php";
     require_once "../db/db.php";
+    require_once "../utils/fileValidation.php";
 
     if (!isset($_SESSION["username"])) {
         header("Location: /welcome.php");
         exit();
     }
+
+    $avatarError = $_SESSION["avatar_error"] ?? "";
+    unset($_SESSION["avatar_error"]);
+
+    if ($_POST) {
+        if (
+            isset($_FILES["profile_image"]) &&
+            $_FILES["profile_image"]["error"] === 0
+        ) {
+            try {
+                $filename = upload_image(
+                    $_FILES["profile_image"],
+                    __DIR__ . "/../uploads/",
+                );
+                update_profile_image($_SESSION["user_id"], $filename);
+            } catch (RuntimeException $e) {
+                $_SESSION["avatar_error"] = $e->getMessage();
+            }
+        }
+
+        $displayName = $_POST["display_name"] ?? "";
+        $bio = $_POST["bio"] ?? "";
+        update_user_info($_SESSION["user_id"], $displayName, $bio);
+
+        header("Location: dashboard.php");
+        exit();
+    }
+    $currentUser = get_user_by_id($_SESSION["user_id"]);
+    $profileImage = $currentUser["profile_image"] ?? null;
 
     $posts = get_posts_by_user($_SESSION["user_id"]);
     ?>
@@ -24,10 +55,11 @@
 
             <?php
             $info_user = [
-                "name" => $_SESSION["name"] ?? $_SESSION["username"],
-                "username" => $_SESSION["username"],
-                "bio" => null,
-                "id" => $_SESSION["user_id"],
+                "name" => $currentUser["title"] ?? $currentUser["username"],
+                "username" => $currentUser["username"],
+                "bio" => $currentUser["presentation"] ?? null,
+                "id" => $currentUser["id"],
+                "profile_image" => $profileImage,
             ];
             require_once "../components/info.php";
             ?>
@@ -36,34 +68,83 @@
                 <h2 class="font-bold">
                     Settings
                 </h2>
-                <form method="POST" class="flex flex-col gap-3">
+
+                <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-3">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-semibold">Profile picture</label>
+                        <div class="flex items-center gap-3">
+                            <div id="avatar-preview-wrap" class="w-14 h-14 rounded-full overflow-hidden bg-offwhite border border-gray flex items-center justify-center text-xl font-bold shrink-0">
+                                <?php if ($profileImage): ?>
+                                    <img src="<?= BASE ?>/uploads/<?= htmlspecialchars(
+    $profileImage,
+) ?>" alt="Profile" class="w-full h-full object-cover">
+                                <?php else: ?>
+                                    <?= strtoupper(
+                                        substr(
+                                            $currentUser["title"] ??
+                                                $currentUser["username"],
+                                            0,
+                                            1,
+                                        ),
+                                    ) ?>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex flex-col gap-1.5 flex-1 min-w-0">
+                                <label class="flex items-center justify-center gap-1.5 border border-gray rounded-lg px-3 py-1.5 text-sm font-semibold hover:bg-offwhite transition-colors cursor-pointer">
+                                    <?= icon("upload", "w-4 h-4") ?>
+                                    Choose photo
+                                    <input type="file" name="profile_image" accept="image/jpeg,image/png" class="sr-only" id="avatar-input">
+                                </label>
+                                <p class="text-xs text-gray text-center">JPG or PNG, max 3 MB</p>
+                            </div>
+                        </div>
+                        <?php if ($avatarError): ?>
+                            <div class="flex items-center gap-1.5 text-xs text-error">
+                                <?= icon("alert-circle", "w-4 h-4 shrink-0") ?>
+                                <span><?= htmlspecialchars(
+                                    $avatarError,
+                                ) ?></span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                     <div class="flex flex-col gap-1">
-                        <label class="text-sm font-semibold">
-                            Display name
-                        </label>
+                        <label class="text-sm font-semibold">Display name</label>
                         <input
                             type="text"
                             name="display_name"
+                            value="<?= htmlspecialchars($currentUser["title"] ?? "") ?>"
                             class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary text-sm"
                         >
                     </div>
                     <div class="flex flex-col gap-1">
-                        <label class="text-sm font-semibold">
-                            Description
-                        </label>
+                        <label class="text-sm font-semibold">Description</label>
                         <textarea
                             name="bio"
                             rows="3"
                             class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary text-sm resize-none"
-                        ></textarea>
+                        ><?= htmlspecialchars($currentUser["presentation"] ?? "") ?></textarea>
                     </div>
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         class="bg-primary font-semibold py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer text-sm"
                     >
                         Save
                     </button>
                 </form>
+
+                <script>
+                    const avatarInput = document.getElementById('avatar-input');
+                    const avatarPreviewWrap = document.getElementById('avatar-preview-wrap');
+                    avatarInput.addEventListener('change', () => {
+                        const file = avatarInput.files[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = e => {
+                            avatarPreviewWrap.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                </script>
             </div>
 
         </aside>

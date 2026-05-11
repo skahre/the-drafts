@@ -29,36 +29,12 @@
         $content = $_POST["content"] ?? "";
 
         if ($image && $image["error"] === 0) {
-            $maxBytes = 3 * 1024 * 1024;
-            if ($image["size"] > $maxBytes) {
-                $_SESSION["error"] = "Image must be under 3 MB.";
+            try {
+                $filename = upload_image($image, __DIR__ . "/../uploads/");
+            } catch (RuntimeException $e) {
+                $_SESSION["error"] = $e->getMessage();
                 $_SESSION["form"] = ["title" => $title, "content" => $content];
                 header("Location: new-post.php");
-                exit();
-            } else {
-                $fileExtension = validate_image_type($image);
-                if ($fileExtension === false) {
-                    $_SESSION["error"] = "Only JPG and PNG images are allowed.";
-
-                    $_SESSION["form"] = [
-                        "title" => $title,
-                        "content" => $content,
-                    ];
-
-                    header("Location: new-post.php");
-
-                    exit();
-                }
-            }
-
-            $tmp_file = $image["tmp_name"];
-            $upload_dir = __DIR__ . "/../uploads/";
-            $filename = bin2hex(random_bytes(16)) . "." . $fileExtension;
-            if (!move_uploaded_file($tmp_file, $upload_dir . $filename)) {
-                $_SESSION["error"] =
-                    "Something went wrong while uploading the file.";
-                header("Location: new-post.php");
-
                 exit();
             }
         }

@@ -22,8 +22,12 @@
                     <div class="w-full flex flex-col bg-white rounded-2xl p-8 gap-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-full bg-offwhite border border-gray flex items-center justify-center text-lg font-bold shrink-0">
-                                    <?= strtoupper(substr($post["blog_title"], 0, 1)) ?>
+                                <div class="w-12 h-12 rounded-full overflow-hidden bg-offwhite border border-gray flex items-center justify-center text-lg font-bold shrink-0">
+                                    <?php if (!empty($post["profile_image"])): ?>
+                                        <img src="uploads/<?= htmlspecialchars($post["profile_image"]) ?>" alt="Profile" class="w-full h-full object-cover">
+                                    <?php else: ?>
+                                        <?= strtoupper(substr($post["blog_title"], 0, 1)) ?>
+                                    <?php endif; ?>
                                 </div>
                                 <div>
                                     <p class="text-sm text-gray">Posted by <strong><?= htmlspecialchars($post["blog_title"]) ?></strong></p>

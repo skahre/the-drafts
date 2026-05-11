@@ -280,12 +280,76 @@ function get_posts_by_user($user_id)
     return $rows;
 }
 
+function get_user_by_id($id)
+{
+    $connection = connect();
+
+    $sql = "SELECT * FROM users WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+
+    mysqli_stmt_close($stmt);
+
+    return $row;
+}
+
+function update_profile_image($user_id, $filename)
+{
+    $connection = connect();
+
+    $sql = "UPDATE users SET profile_image = ? WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "si", $filename, $user_id);
+    mysqli_stmt_execute($stmt);
+
+    $affectedRows = mysqli_stmt_affected_rows($stmt);
+
+    mysqli_stmt_close($stmt);
+
+    return $affectedRows;
+}
+
+function update_user_info($user_id, $display_name, $bio)
+{
+    $connection = connect();
+
+    $sql = "UPDATE users SET title = ?, presentation = ? WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "ssi", $display_name, $bio, $user_id);
+    mysqli_stmt_execute($stmt);
+
+    $affectedRows = mysqli_stmt_affected_rows($stmt);
+
+    mysqli_stmt_close($stmt);
+
+    return $affectedRows;
+}
+
 function get_all_posts()
 {
     $connection = connect();
 
     $sql =
-        "SELECT posts.*, users.username, COALESCE(users.title, users.username) AS blog_title FROM posts JOIN users ON posts.user_id = users.id ORDER BY posts.created_at DESC";
+        "SELECT posts.*, users.username, users.profile_image, COALESCE(users.title, users.username) AS blog_title FROM posts JOIN users ON posts.user_id = users.id ORDER BY posts.created_at DESC";
     $stmt = mysqli_prepare($connection, $sql);
 
     if (!$stmt) {

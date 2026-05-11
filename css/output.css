@@ -244,8 +244,14 @@
   .h-12 {
     height: calc(var(--spacing) * 12);
   }
+  .h-14 {
+    height: calc(var(--spacing) * 14);
+  }
   .h-\[80lvh\] {
     height: 80lvh;
+  }
+  .h-full {
+    height: 100%;
   }
   .w-1\/5 {
     width: calc(1 / 5 * 100%);
@@ -264,6 +270,9 @@
   }
   .w-12 {
     width: calc(var(--spacing) * 12);
+  }
+  .w-14 {
+    width: calc(var(--spacing) * 14);
   }
   .w-72 {
     width: calc(var(--spacing) * 72);
@@ -346,6 +355,9 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .overflow-hidden {
+    overflow: hidden;
+  }
   .rounded-2xl {
     border-radius: var(--radius-2xl);
   }
@@ -387,6 +399,9 @@
   }
   .bg-white {
     background-color: #fefbf5;
+  }
+  .object-cover {
+    object-fit: cover;
   }
   .p-2 {
     padding: calc(var(--spacing) * 2);
