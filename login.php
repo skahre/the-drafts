@@ -22,7 +22,7 @@
     if ($_POST) {
         $username = strtolower($_POST["username"]);
 
-        $user = get_user($username);
+        $user = get_user_by_name($username);
 
         if (
             $user !== null &&
@@ -60,7 +60,7 @@
                     >
                 </div>
 
-                <?php password_input('password', 'Password'); ?>
+                <?php password_input("password", "Password"); ?>
                 <span class="text-xs text-error"><?php echo $error; ?></span>
 
                 <button
