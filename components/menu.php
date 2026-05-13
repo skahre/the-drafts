@@ -1,3 +1,4 @@
+<!-- PLACEHOLDER: Posts should be taken from the database -->
 <nav class="bg-white rounded-2xl p-4 flex flex-col gap-2">
     <h2 class="font-bold text-center">Posts</h2>
     <ul class="flex flex-col gap-1 list-none">

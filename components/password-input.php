@@ -1,8 +1,11 @@
 <?php
-require_once __DIR__ . '/icons.php';
+require_once __DIR__ . "/icons.php";
 
-function password_input(string $id, string $label, ?string $hint = null, ?string $error_id = null): void {
-?>
+// Renders a password input field with a toggle button to show/hide the password.
+// The function can be reused for both login and registration
+function password_input($id, $label, $hint = null, $error_id = null)
+{
+    ?>
 <div class="flex flex-col gap-1">
     <label for="<?php echo $id; ?>" class="text-sm font-semibold"><?php echo $label; ?></label>
     <div class="relative">
@@ -19,8 +22,8 @@ function password_input(string $id, string $label, ?string $hint = null, ?string
             onclick="togglePassword('<?php echo $id; ?>', this)"
             class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
         >
-            <?= icon('eye', 'w-5 h-5', ['data-eye' => 'open']) ?>
-            <?= icon('eye-off', 'w-5 h-5 hidden', ['data-eye' => 'closed']) ?>
+            <?= icon("eye", "w-5 h-5", ["data-eye" => "open"]) ?>
+            <?= icon("eye-off", "w-5 h-5 hidden", ["data-eye" => "closed"]) ?>
         </button>
     </div>
     <?php if ($hint): ?>

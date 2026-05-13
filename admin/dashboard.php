@@ -11,6 +11,7 @@
     require_once "../components/icons.php";
     require_once "../db/db.php";
     require_once "../utils/fileValidation.php";
+    require_once "../components/profileImage.php";
 
     if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
         header("Location: /welcome.php");
@@ -112,7 +113,9 @@
                         <input
                             type="text"
                             name="display_name"
-                            value="<?= htmlspecialchars($currentUser["title"] ?? "") ?>"
+                            value="<?= htmlspecialchars(
+                                $currentUser["title"] ?? "",
+                            ) ?>"
                             class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary text-sm"
                         >
                     </div>
@@ -122,7 +125,9 @@
                             name="bio"
                             rows="3"
                             class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary text-sm resize-none"
-                        ><?= htmlspecialchars($currentUser["presentation"] ?? "") ?></textarea>
+                        ><?= htmlspecialchars(
+                            $currentUser["presentation"] ?? "",
+                        ) ?></textarea>
                     </div>
                     <button
                         type="submit"

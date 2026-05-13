@@ -1,3 +1,4 @@
+<!-- PLACEHOLDER: Get post content from database -->
 <article class="bg-white rounded-2xl p-8 flex flex-col gap-4">
     <h1 class="text-2xl font-bold">Post title</h1>
     <p class="text-sm text-gray">2026-05-05</p>

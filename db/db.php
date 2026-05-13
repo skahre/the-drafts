@@ -15,6 +15,7 @@ if (file_exists($serverPath)) {
 } else {
     die("Could not find db_credentials.php.");
 }
+
 function connect()
 {
     static $connection = null;
@@ -57,6 +58,7 @@ function get_result($stmt)
     return $rows;
 }
 
+// Adds a new user to the database
 function add_user($username, $hashedPassword)
 {
     $connection = connect();
@@ -86,6 +88,7 @@ function add_user($username, $hashedPassword)
     return $newId; // Return the new user's id
 }
 
+// Changes a user's username based on their id
 function change_username($id, $newUsername)
 {
     $connection = connect();
@@ -110,6 +113,7 @@ function change_username($id, $newUsername)
     return $affectedRows;
 }
 
+// Deletes a user based on their id
 function delete_user($id)
 {
     $connection = connect();
@@ -134,6 +138,7 @@ function delete_user($id)
     return $affectedRows;
 }
 
+// Retrieves a user from the database by their username
 function get_user_by_name($username)
 {
     $connection = connect();
@@ -157,6 +162,7 @@ function get_user_by_name($username)
     return $row; // Returns an associative array (or null)
 }
 
+// Retrieves a user from the database by their id
 function get_user_by_id($id)
 {
     $connection = connect();
@@ -180,6 +186,7 @@ function get_user_by_id($id)
     return $row; // Returns an associative array (or null)
 }
 
+// Retrieves all users from the database, sorted by creation date (oldest first)
 function get_users()
 {
     $connection = connect();
@@ -202,6 +209,7 @@ function get_users()
     return $rows;
 }
 
+// Adds a new post to the database, linked to a user by their id
 function add_post($user_id, $title, $content)
 {
     $connection = connect();
@@ -232,6 +240,7 @@ function add_post($user_id, $title, $content)
     return $newId;
 }
 
+// Adds a new image to the database, linked to a post by its id
 function add_image($post_id, $filename)
 {
     $connection = connect();
@@ -262,6 +271,7 @@ function add_image($post_id, $filename)
     return $newId;
 }
 
+// Retrieves all posts by a specific user, sorted by creation date (newest first)
 function get_posts_by_user($user_id)
 {
     $connection = connect();
@@ -284,6 +294,7 @@ function get_posts_by_user($user_id)
     return $rows; // Returns an array of associative arrays (or empty array if no posts)
 }
 
+// Updates a user's profile image based on their id
 function update_profile_image($user_id, $filename)
 {
     $connection = connect();
@@ -309,6 +320,7 @@ function update_profile_image($user_id, $filename)
     return $affectedRows;
 }
 
+// Updates a user's display name and bio based on their id
 function update_user_info($user_id, $display_name, $bio)
 {
     $connection = connect();
@@ -334,11 +346,11 @@ function update_user_info($user_id, $display_name, $bio)
     return $affectedRows;
 }
 
+// Retrieves all posts with their authors' usernames and profile images, sorted by creation date (newest first)
 function get_all_posts()
 {
     $connection = connect();
 
-    // Gets all posts with their authors' usernames and profile images, sorted by creation date (newest first)
     // COALESCE(users.title, users.username) AS blog_title returns the user's title if it exists, otherwise their username
     $sql =
         "SELECT posts.*, users.username, users.profile_image, COALESCE(users.title, users.username) AS blog_title FROM posts JOIN users ON posts.user_id = users.id ORDER BY posts.created_at DESC";

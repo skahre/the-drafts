@@ -53,6 +53,7 @@
 
     <!-- Include JavaScript validation script -->
     <script src="javascript/validation.js"></script>
+    <script src="javascript/utils.js"></script>
 
     <main class="flex flex-1 items-center justify-center p-4 bg-offwhite">
         <div class="bg-white rounded-2xl p-8 w-full max-w-sm flex flex-col gap-6">
@@ -60,7 +61,7 @@
             <h1 class="text-2xl font-bold text-center">Create account</h1>
 
             <!-- Only submit to PHP if JavaScript validation passes -->
-            <form method="POST" onsubmit="return validatePassword(this)" class="flex flex-col gap-4">
+            <form method="POST" onsubmit="return validatePassword(this, 'confirm-password-error')" class="flex flex-col gap-4">
 
                 <div class="flex flex-col gap-1">
                     <label for="username" class="text-sm font-semibold">Username</label>
