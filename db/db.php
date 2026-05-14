@@ -368,3 +368,99 @@ function get_all_posts()
 
     return $rows; // Returns an array of associative arrays (or empty array if no posts)
 }
+
+function get_post_by_id($id)
+{
+    $connection = connect();
+
+    $sql = "SELECT * FROM posts WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+
+    // Gets the result as associative array
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+
+    mysqli_stmt_close($stmt);
+
+    return $row; // Returns an associative array (or null)
+}
+
+function get_image_by_post($post_id)
+{
+    $connection = connect();
+
+    $sql = "SELECT * FROM images WHERE post_id = ?";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $post_id);
+    mysqli_stmt_execute($stmt);
+
+    // Gets the result as associative array
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+
+    mysqli_stmt_close($stmt);
+
+    return $row; // Returns an associative array (or null)
+}
+
+function update_post($post_id, $title, $content)
+{
+    $connection = connect();
+
+    // Using placeholders to protect against SQL injection
+    $sql = "UPDATE posts SET title = ?, content = ? WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "ssi", $title, $content, $post_id);
+    mysqli_stmt_execute($stmt);
+
+    $affectedRows = mysqli_stmt_affected_rows($stmt);
+
+    mysqli_stmt_close($stmt);
+
+    // Returns amount of affected rows:
+    // 1+ = something was updated
+    // 0  = nothing was changed (e.g., wrong id or same value)
+    return $affectedRows;
+}
+
+function update_post_image($post_id, $filename)
+{
+    $connection = connect();
+
+    // Using placeholders to protect against SQL injection
+    $sql = "UPDATE images SET filename = ? WHERE post_id = ?";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "si", $filename, $post_id);
+    mysqli_stmt_execute($stmt);
+
+    $affectedRows = mysqli_stmt_affected_rows($stmt);
+
+    mysqli_stmt_close($stmt);
+
+    // Returns amount of affected rows:
+    // 1+ = something was updated
+    // 0  = nothing was changed (e.g., wrong id or same value)
+    return $affectedRows;
+}

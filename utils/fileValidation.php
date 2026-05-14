@@ -46,3 +46,11 @@ function upload_image($file, $upload_dir)
     // Return the new filename for database storage
     return $filename;
 }
+
+function delete_image($filename, $upload_dir)
+{
+    $filePath = $upload_dir . $filename;
+    if (file_exists($filePath)) {
+        unlink($filePath);
+    }
+}

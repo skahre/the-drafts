@@ -18,11 +18,30 @@
         exit();
     }
 
+    $redirectUrl = BASE . "/admin/dashboard.php";
+
+    if ($_GET["id"]) {
+        $postId = $_GET["id"];
+        $post = get_post_by_id($postId);
+        if (!$post) {
+            header("Location: $redirectUrl");
+            exit();
+        }
+        if ($post["user_id"] !== $_SESSION["user_id"]) {
+            header("Location: $redirectUrl");
+            exit();
+        }
+    } else {
+        header("Location: $redirectUrl");
+        exit();
+    }
+
     $isEditing = $_SESSION["editing"] ?? false;
     unset($_SESSION["editing"]);
 
-    // TODO: fetch from DB once get_image_by_post() is available
-    $currentImage = "../images/profile.png";
+    $currentImage = get_image_by_post($postId)["filename"] ?? null;
+    $currentTitle = $post["title"];
+    $currentContent = $post["content"];
 
     // Initialize variables for form data and errors
     $imageError = $_SESSION["error"] ?? "";
@@ -38,6 +57,7 @@
         if ($image && $image["error"] === 0) {
             try {
                 $filename = upload_image($image, __DIR__ . "/../uploads/");
+                delete_image($currentImage, __DIR__ . "/../uploads/");
             } catch (RuntimeException $e) {
                 $_SESSION["error"] = $e->getMessage();
                 $_SESSION["form"] = ["title" => $title, "content" => $content];
@@ -66,7 +86,7 @@
         }
 
         if ($title !== "" && $content !== "") {
-            $postId = add_post($_SESSION["user_id"], $title, $content);
+            $postId = update_post($_GET["id"], $title, $content);
             if ($postId instanceof Exception) {
                 $_SESSION["error"] =
                     "Something went wrong while saving the post.";
@@ -74,7 +94,7 @@
                 exit();
             }
             if ($image && $image["error"] === 0) {
-                add_image($postId, $filename);
+                update_post_image($_GET["id"], $filename);
             }
             header("Location: dashboard.php");
             exit();
@@ -101,7 +121,7 @@
                     ? "hidden"
                     : "flex" ?> items-center gap-2">
                     <h1 class="text-2xl font-bold"><?= htmlspecialchars(
-                        $saved["title"] ?? "Untitled Post",
+                        $saved["title"] ?? $currentTitle,
                     ) ?></h1>
                     <button type="button" id="edit-title-btn" class="p-1 text-gray hover:text-black transition-colors cursor-pointer">
                         <?= icon("pencil", "w-4 h-4") ?>
@@ -118,7 +138,7 @@
                             name="title"
                             required
                             value="<?= htmlspecialchars(
-                                $saved["title"] ?? "",
+                                $saved["title"] ?? $currentTitle,
                             ) ?>"
                             class="w-full text-2xl font-bold bg-transparent border-b border-gray focus:outline-none focus:border-primary pb-0.5"
                         >
@@ -347,7 +367,9 @@
                     ? "hidden"
                     : "flex" ?> flex-col gap-1">
                     <div class="flex items-start gap-2">
-                        <p id="content-display" class="text-sm whitespace-pre-wrap flex-1"><?= htmlspecialchars($saved["content"] ?? "") ?></p>
+                        <p id="content-display" class="text-sm whitespace-pre-wrap flex-1"><?= htmlspecialchars(
+                            $saved["content"] ?? $currentContent,
+                        ) ?></p>
                         <button type="button" id="edit-content-btn" class="p-1 text-gray hover:text-black transition-colors cursor-pointer shrink-0">
                             <?= icon("pencil", "w-4 h-4") ?>
                         </button>
@@ -363,7 +385,9 @@
                         rows="12"
                         required
                         class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary resize-none"
-                    ><?= htmlspecialchars($saved["content"] ?? "") ?></textarea>
+                    ><?= htmlspecialchars(
+                        $saved["content"] ?? $currentContent,
+                    ) ?></textarea>
                     <div class="flex gap-2">
                         <button type="button" id="save-content-btn" class="self-start text-xs font-semibold px-2.5 py-1 rounded-md bg-primary hover:opacity-90 transition-opacity cursor-pointer">Save</button>
                         <button type="button" id="cancel-content-btn" class="self-start text-xs px-2.5 py-1 rounded-md border border-gray hover:bg-offwhite transition-colors cursor-pointer">Cancel</button>
