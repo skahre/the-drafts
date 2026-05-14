@@ -61,10 +61,10 @@
             } catch (RuntimeException $e) {
                 $_SESSION["error"] = $e->getMessage();
                 $_SESSION["form"] = ["title" => $title, "content" => $content];
-                header("Location: new-post.php");
+                header("Location: edit-post.php?id=" . $_GET["id"]);
                 exit();
             }
-        } else {
+        } elseif ($image && $image["error"] !== 4) {
             $upload_errors = [
                 0 => "No error, the file uploaded successfully.",
                 1 => "Image too big (PHP limit).",
@@ -81,7 +81,7 @@
                 $upload_errors[$image["error" ?? 0]] ?? "Unknown upload error.",
             );
 
-            header("Location: new-post.php");
+            header("Location: edit-post.php?id=" . $_GET["id"]);
             exit();
         }
 
@@ -90,13 +90,13 @@
             if ($postId instanceof Exception) {
                 $_SESSION["error"] =
                     "Something went wrong while saving the post.";
-                header("Location: new-post.php");
+                header("Location: edit-post.php?id=" . $_GET["id"]);
                 exit();
             }
             if ($image && $image["error"] === 0) {
                 update_post_image($_GET["id"], $filename);
             }
-            header("Location: dashboard.php");
+            header("Location: edit-post.php?id=" . $_GET["id"]);
             exit();
         }
     }
