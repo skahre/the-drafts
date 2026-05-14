@@ -8,14 +8,14 @@ define("BASE", "/PROJEKT");
 ?>
 
 <header>
-    <nav class="flex items-center justify-between bg-white py-4 px-8 shadow-sm">
+    <nav class="relative flex items-center justify-between bg-white py-4 px-8 shadow-sm">
         <button 
             class="px-4 py-2 rounded-lg cursor-pointer hover:bg-offwhite transition-colors" 
             onClick="window.location.href=`<?= BASE ?>/welcome.php`"
         >
             Home
         </button>
-        <span class="text-xl font-bold tracking-widest">THE DRAFTS</span>
+        <span class="absolute left-1/2 -translate-x-1/2 text-xl font-bold tracking-widest">THE DRAFTS</span>
         <span class="flex gap-2">
             <?php // Only render the admin and sign out buttons if the user is logged in, otherwise render the log in and sign up buttons
 
