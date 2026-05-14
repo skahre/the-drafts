@@ -44,6 +44,7 @@
         header("Location: dashboard.php");
         exit();
     }
+
     $currentUser = get_user_by_id($_SESSION["user_id"]);
     $profileImage = $currentUser["profile_image"] ?? null;
 

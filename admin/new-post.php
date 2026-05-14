@@ -12,14 +12,15 @@
     require_once "../db/db.php";
     require_once "../utils/fileValidation.php";
 
+    // Redirect to welcome page if not logged in
     if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
         header("Location: /welcome.php");
         exit();
     }
 
+    // Initialize variables for form data and errors
     $imageError = $_SESSION["error"] ?? "";
     unset($_SESSION["error"]);
-
     $saved = $_SESSION["form"] ?? [];
     unset($_SESSION["form"]);
 
@@ -37,20 +38,6 @@
                 header("Location: new-post.php");
                 exit();
             }
-        }
-        if ($title !== "" && $content !== "") {
-            $postId = add_post($_SESSION["user_id"], $title, $content);
-            if ($postId instanceof Exception) {
-                $_SESSION["error"] =
-                    "Something went wrong while saving the post.";
-                header("Location: new-post.php");
-                exit();
-            }
-            if ($image && $image["error"] === 0) {
-                add_image($postId, $filename);
-            }
-            header("Location: dashboard.php");
-            exit();
         } else {
             $upload_errors = [
                 0 => "No error, the file uploaded successfully.",
@@ -69,6 +56,21 @@
             );
 
             header("Location: new-post.php");
+            exit();
+        }
+
+        if ($title !== "" && $content !== "") {
+            $postId = add_post($_SESSION["user_id"], $title, $content);
+            if ($postId instanceof Exception) {
+                $_SESSION["error"] =
+                    "Something went wrong while saving the post.";
+                header("Location: new-post.php");
+                exit();
+            }
+            if ($image && $image["error"] === 0) {
+                add_image($postId, $filename);
+            }
+            header("Location: dashboard.php");
             exit();
         }
     }
@@ -153,85 +155,8 @@
                 </div>
 
                 <script src="../javascript/validation.js"></script>
-                <script>
-                    const zone = document.getElementById('drop-zone');
-                    const input = document.getElementById('image-input');
-                    const filePreview = document.getElementById('file-preview');
-                    const errorEl = document.getElementById('image-error');
-                    const errorText = document.getElementById('error-text');
-
-                    function formatSize(bytes) {
-                        if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-                        return Math.round(bytes / 1024) + ' KB';
-                    }
-
-                    function showError(msg) {
-                        errorText.textContent = msg;
-                        errorEl.classList.remove('hidden');
-                        errorEl.classList.add('flex');
-                    }
-
-                    function hideError() {
-                        errorEl.classList.add('hidden');
-                        errorEl.classList.remove('flex');
-                    }
-
-                    function setFile(file) {
-                        if (!file) {
-                            filePreview.classList.add('hidden');
-                            filePreview.classList.remove('flex');
-                            hideError();
-                            return;
-                        }
-                        document.getElementById('preview-name').textContent = file.name;
-                        document.getElementById('preview-size').textContent = formatSize(file.size);
-                        filePreview.classList.remove('hidden');
-                        filePreview.classList.add('flex');
-                        const error = validateFile(file);
-                        if (error) {
-                            filePreview.classList.add('border-error');
-                            filePreview.classList.remove('border-gray');
-                            showError(error);
-                        } else {
-                            filePreview.classList.remove('border-error');
-                            filePreview.classList.add('border-gray');
-                            hideError();
-                        }
-                    }
-
-                    zone.addEventListener('dragover', e => {
-                        e.preventDefault();
-                        zone.classList.add('border-primary', 'bg-white');
-                    });
-                    zone.addEventListener('dragleave', () => {
-                        zone.classList.remove('border-primary', 'bg-white');
-                    });
-                    zone.addEventListener('drop', e => {
-                        e.preventDefault();
-                        zone.classList.remove('border-primary', 'bg-white');
-                        const file = e.dataTransfer.files[0];
-                        if (!file) return;
-                        const dt = new DataTransfer();
-                        dt.items.add(file);
-                        input.files = dt.files;
-                        setFile(file);
-                    });
-
-                    input.addEventListener('change', () => setFile(input.files[0]));
-
-                    document.getElementById('remove-file').addEventListener('click', () => {
-                        input.value = '';
-                        setFile(null);
-                    });
-
-                    document.querySelector('form').addEventListener('submit', e => {
-                        const error = validateFile(input.files[0]);
-                        if (error) {
-                            e.preventDefault();
-                            setFile(input.files[0]);
-                        }
-                    });
-                </script>
+                <script src="../javascript/image-upload.js"></script>
+                <script>initImageUpload();</script>
 
                 <div class="flex flex-col gap-1">
                     <label class="text-sm font-semibold">Content<span class="text-error">*</span></label>
