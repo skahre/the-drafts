@@ -1,3 +1,7 @@
+function isEmpty(input) {
+  return input.value.trim() === "";
+}
+
 // Client-side validation for password confirmation
 function validatePassword(form, errorId) {
   const password = form.password.value.trim();

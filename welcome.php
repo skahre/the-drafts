@@ -9,6 +9,7 @@
     <?php
     require_once "components/header.php";
     require_once "components/icons.php";
+    require_once "components/profileImage.php";
     require_once "db/db.php";
 
     // Fetch all posts from the database
@@ -27,7 +28,7 @@
                     <div class="w-full flex flex-col bg-white rounded-2xl p-8 gap-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <?php include "components/profileImage.php"; ?>
+                                <?php display_profile_image($post["profile_image"], $post["username"]); ?>
                                 <div>
                                     <p class="text-sm text-gray">Posted by <strong><?= htmlspecialchars(
                                         $post["blog_title"],
