@@ -1,4 +1,48 @@
-<?php require_once "utils/bases.php"; ?>
+<?php
+// Get all necessary files
+require_once "utils/bases.php";
+require_once "components/password-input.php";
+require_once "db/db.php";
+
+// Redirect to dashboard if already logged in
+if (isset($_SESSION["username"]) && isset($_SESSION["user_id"])) {
+    header("Location: admin/dashboard.php");
+    exit();
+}
+
+// Initialize error message for registration
+$error = $_SESSION["error"] ?? "";
+unset($_SESSION["error"]);
+
+// If form is submitted, attempt to register the user
+if ($_POST) {
+    $hashedPassword = password_hash($_POST["password"], PASSWORD_DEFAULT);
+
+    $result = add_user(strtolower($_POST["username"]), $hashedPassword);
+
+    // Check if the result is an exception and handle it accordingly
+    if ($result instanceof mysqli_sql_exception) {
+        if ($result->getCode() === 1062) {
+            $_SESSION["error"] = "That username is already taken.";
+        } elseif ($result->getCode() === 1406) {
+            $_SESSION["error"] = "Username is too long.";
+        } else {
+            $_SESSION["error"] = "Registration failed. Please try again.";
+        }
+
+        // Redirect back to the registration page with the error message
+        header("Location: register.php");
+        exit();
+    } else {
+        // Set session variables and redirect to dashboard on successful registration
+        $_SESSION["username"] = $username;
+        $_SESSION["user_id"] = $user["id"];
+        header("Location: admin/dashboard.php");
+        $_SESSION["error"] = "Registration successful!";
+        exit();
+    }
+}
+?>
 
 
 <!DOCTYPE html>
@@ -9,50 +53,7 @@
 </head>
 <body>
 
-    <?php
-    require_once "components/header.php";
-    require_once "components/password-input.php";
-    require_once "db/db.php";
-
-    // Redirect to dashboard if already logged in
-    if (isset($_SESSION["username"]) && isset($_SESSION["user_id"])) {
-        header("Location: admin/dashboard.php");
-        exit();
-    }
-
-    // Initialize error message for registration
-    $error = $_SESSION["error"] ?? "";
-    unset($_SESSION["error"]);
-
-    // If form is submitted, attempt to register the user
-    if ($_POST) {
-        $hashedPassword = password_hash($_POST["password"], PASSWORD_DEFAULT);
-
-        $result = add_user(strtolower($_POST["username"]), $hashedPassword);
-
-        // Check if the result is an exception and handle it accordingly
-        if ($result instanceof mysqli_sql_exception) {
-            if ($result->getCode() === 1062) {
-                $_SESSION["error"] = "That username is already taken.";
-            } elseif ($result->getCode() === 1406) {
-                $_SESSION["error"] = "Username is too long.";
-            } else {
-                $_SESSION["error"] = "Registration failed. Please try again.";
-            }
-
-            // Redirect back to the registration page with the error message
-            header("Location: register.php");
-            exit();
-        } else {
-            // Set session variables and redirect to dashboard on successful registration
-            $_SESSION["username"] = $username;
-            $_SESSION["user_id"] = $user["id"];
-            header("Location: admin/dashboard.php");
-            $_SESSION["error"] = "Registration successful!";
-            exit();
-        }
-    }
-    ?>
+    <?php require_once "components/header.php"; ?>
 
     <!-- Include JavaScript validation script -->
     <script src="javascript/validation.js"></script>

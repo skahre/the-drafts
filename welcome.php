@@ -1,4 +1,13 @@
-<?php require_once "utils/bases.php"; ?>
+<?php
+// Getting all necessary files and data
+require_once "utils/bases.php";
+require_once "components/icons.php";
+require_once "components/profileImage.php";
+require_once "db/db.php";
+
+// Fetch all posts from the database
+$posts = get_all_posts();
+?>
 
 <!DOCTYPE html>
 <html lang="sv">
@@ -8,15 +17,7 @@
 </head>
 <body>
 
-    <?php
-    require_once "components/header.php";
-    require_once "components/icons.php";
-    require_once "components/profileImage.php";
-    require_once "db/db.php";
-
-    // Fetch all posts from the database
-    $posts = get_all_posts();
-    ?>
+    <?php require_once "components/header.php"; ?>
 
     <main class="flex flex-row p-4 gap-4 flex-1 bg-offwhite">
         <!-- Sidebar with all bloggers -->

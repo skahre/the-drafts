@@ -1,4 +1,46 @@
-<?php require_once "utils/bases.php"; ?>
+<?php
+require_once "../utils/bases.php";
+require_once "../components/icons.php";
+require_once "../db/db.php";
+
+// Redirect to blog page if not logged in
+if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
+    header("Location: /blog.php");
+    exit();
+}
+
+$postRedirectUrl = BASE . "/admin/dashboard.php";
+
+if ($_GET["id"]) {
+    $postId = $_GET["id"];
+    $post = get_post_by_id($postId);
+    if (!$post) {
+        header("Location: $postRedirectUrl");
+        exit();
+    }
+    if ($post["user_id"] !== $_SESSION["user_id"]) {
+        $authRedirectUrl =
+            BASE .
+            "/blog.php?id=" .
+            $post["user_id"] .
+            "&post_id=" .
+            $post["id"];
+        header("Location: $authRedirectUrl");
+        exit();
+    }
+    $image = get_image_by_post($postId);
+} else {
+    header("Location: $postRedirectUrl");
+    exit();
+}
+
+$post_info = [
+    "title" => $post["title"],
+    "created_at" => $post["created_at"],
+    "content" => $post["content"],
+    "image" => $image,
+];
+?>
 
 <!DOCTYPE html>
 <html lang="sv">
@@ -9,38 +51,7 @@
     ) ?> | The Drafts</title>
 </head>
 <body>
-    <?php
-    require_once "../components/header.php";
-    require_once "../components/icons.php";
-    require_once "../db/db.php";
-
-    // Redirect to blog page if not logged in
-    if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
-        header("Location: /blog.php");
-        exit();
-    }
-
-    // TODO: Replace with actual blog post
-    $authRedirectUrl = BASE . "/blog.php";
-    $postRedirectUrl = BASE . "/admin/dashboard.php";
-
-    if ($_GET["id"]) {
-        $postId = $_GET["id"];
-        $post = get_post_by_id($postId);
-        if (!$post) {
-            header("Location: $postRedirectUrl");
-            exit();
-        }
-        if ($post["user_id"] !== $_SESSION["user_id"]) {
-            header("Location: $authRedirectUrl");
-            exit();
-        }
-        $image = get_image_by_post($postId);
-    } else {
-        header("Location: $postRedirectUrl");
-        exit();
-    }
-    ?>
+    <?php require_once "../components/header.php"; ?>
     <main class="flex flex-1 items-start justify-center p-8 bg-offwhite">
         <div class="w-full max-w-2xl flex flex-col gap-4">
 

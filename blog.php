@@ -13,11 +13,26 @@ if ($_GET["id"] && $_GET["post_id"]) {
         header("Location: $redirectUrl");
         exit();
     }
-    $image = get_image_by_post($postId);
 } else {
     header("Location: $redirectUrl");
     exit();
 }
+
+$info_user = [
+    "profile_image" => $blogger["profile_image"] ?? null,
+    "name" => $blogger["title"] ?? "Unknown Blogger",
+    "username" => $blogger["username"] ?? "place_holder",
+    "bio" => $blogger["presentation"] ?? null,
+];
+
+$image = get_image_by_post($postId);
+
+$post_info = [
+    "title" => $post["title"],
+    "created_at" => $post["created_at"],
+    "content" => $post["content"],
+    "image" => $image,
+];
 ?>
 
 <!DOCTYPE html>
@@ -33,14 +48,6 @@ if ($_GET["id"] && $_GET["post_id"]) {
     <main class="flex p-4 gap-4 flex-1 bg-offwhite">
         <aside class="flex flex-col gap-4 flex-1 min-w-0">
             <?php
-            // PLACEHOLDER: Fetch blogger information from database
-            $info_user = [
-                "profile_image" => $blogger["profile_image"] ?? null,
-                "name" => $blogger["title"] ?? "Unknown Blogger",
-                "username" => $blogger["username"] ?? "place_holder",
-                "bio" => $blogger["presentation"] ?? null,
-            ];
-
             // Include same info component as in profile page
             // Gets necessary data from $info_user array
             include "components/info.php";

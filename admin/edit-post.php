@@ -1,4 +1,97 @@
-<?php require_once "utils/bases.php"; ?>
+<?php
+require_once "../utils/bases.php";
+require_once "../components/icons.php";
+require_once "../db/db.php";
+require_once "../utils/fileValidation.php";
+
+// Redirect to welcome page if not logged in
+if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
+    header("Location: /welcome.php");
+    exit();
+}
+
+$redirectUrl = BASE . "/admin/dashboard.php";
+
+if ($_GET["id"]) {
+    $postId = $_GET["id"];
+    $post = get_post_by_id($postId);
+    if (!$post) {
+        header("Location: $redirectUrl");
+        exit();
+    }
+    if ($post["user_id"] !== $_SESSION["user_id"]) {
+        header("Location: $redirectUrl");
+        exit();
+    }
+} else {
+    header("Location: $redirectUrl");
+    exit();
+}
+
+$isEditing = $_SESSION["editing"] ?? false;
+unset($_SESSION["editing"]);
+
+$currentImage = get_image_by_post($postId)["filename"] ?? null;
+$currentTitle = $post["title"];
+$currentContent = $post["content"];
+
+// Initialize variables for form data and errors
+$imageError = $_SESSION["error"] ?? "";
+unset($_SESSION["error"]);
+$saved = $_SESSION["form"] ?? [];
+unset($_SESSION["form"]);
+
+if ($_POST) {
+    $title = $_POST["title"] ?? "";
+    $image = $_FILES["image-input"] ?? null;
+    $content = $_POST["content"] ?? "";
+
+    if ($image && $image["error"] === 0) {
+        try {
+            $filename = upload_image($image, __DIR__ . "/../uploads/");
+            delete_image($currentImage, __DIR__ . "/../uploads/");
+        } catch (RuntimeException $e) {
+            $_SESSION["error"] = $e->getMessage();
+            $_SESSION["form"] = ["title" => $title, "content" => $content];
+            header("Location: edit-post.php?id=" . $_GET["id"]);
+            exit();
+        }
+    } elseif ($image && $image["error"] !== 4) {
+        $upload_errors = [
+            0 => "No error, the file uploaded successfully.",
+            1 => "Image too big (PHP limit).",
+            2 => "Image too big (HTML form limit).",
+            3 => "Image only partially uploaded.",
+            4 => "No file selected.",
+            6 => "Temporary folder missing.",
+            7 => "Failed to write to disk.",
+            8 => "Uppladdningen stoppad.",
+        ];
+        $_SESSION["error"] = "Something went wrong while uploading image.";
+
+        error_log(
+            $upload_errors[$image["error" ?? 0]] ?? "Unknown upload error.",
+        );
+
+        header("Location: edit-post.php?id=" . $_GET["id"]);
+        exit();
+    }
+
+    if ($title !== "" && $content !== "") {
+        $postId = update_post($_GET["id"], $title, $content);
+        if ($postId instanceof Exception) {
+            $_SESSION["error"] = "Something went wrong while saving the post.";
+            header("Location: edit-post.php?id=" . $_GET["id"]);
+            exit();
+        }
+        if ($image && $image["error"] === 0) {
+            update_post_image($_GET["id"], $filename);
+        }
+        header("Location: edit-post.php?id=" . $_GET["id"]);
+        exit();
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="sv">
@@ -8,101 +101,7 @@
 </head>
 <body>
 
-    <?php
-    require_once "../components/header.php";
-    require_once "../components/icons.php";
-    require_once "../db/db.php";
-    require_once "../utils/fileValidation.php";
-
-    // Redirect to welcome page if not logged in
-    if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
-        header("Location: /welcome.php");
-        exit();
-    }
-
-    $redirectUrl = BASE . "/admin/dashboard.php";
-
-    if ($_GET["id"]) {
-        $postId = $_GET["id"];
-        $post = get_post_by_id($postId);
-        if (!$post) {
-            header("Location: $redirectUrl");
-            exit();
-        }
-        if ($post["user_id"] !== $_SESSION["user_id"]) {
-            header("Location: $redirectUrl");
-            exit();
-        }
-    } else {
-        header("Location: $redirectUrl");
-        exit();
-    }
-
-    $isEditing = $_SESSION["editing"] ?? false;
-    unset($_SESSION["editing"]);
-
-    $currentImage = get_image_by_post($postId)["filename"] ?? null;
-    $currentTitle = $post["title"];
-    $currentContent = $post["content"];
-
-    // Initialize variables for form data and errors
-    $imageError = $_SESSION["error"] ?? "";
-    unset($_SESSION["error"]);
-    $saved = $_SESSION["form"] ?? [];
-    unset($_SESSION["form"]);
-
-    if ($_POST) {
-        $title = $_POST["title"] ?? "";
-        $image = $_FILES["image-input"] ?? null;
-        $content = $_POST["content"] ?? "";
-
-        if ($image && $image["error"] === 0) {
-            try {
-                $filename = upload_image($image, __DIR__ . "/../uploads/");
-                delete_image($currentImage, __DIR__ . "/../uploads/");
-            } catch (RuntimeException $e) {
-                $_SESSION["error"] = $e->getMessage();
-                $_SESSION["form"] = ["title" => $title, "content" => $content];
-                header("Location: edit-post.php?id=" . $_GET["id"]);
-                exit();
-            }
-        } elseif ($image && $image["error"] !== 4) {
-            $upload_errors = [
-                0 => "No error, the file uploaded successfully.",
-                1 => "Image too big (PHP limit).",
-                2 => "Image too big (HTML form limit).",
-                3 => "Image only partially uploaded.",
-                4 => "No file selected.",
-                6 => "Temporary folder missing.",
-                7 => "Failed to write to disk.",
-                8 => "Uppladdningen stoppad.",
-            ];
-            $_SESSION["error"] = "Something went wrong while uploading image.";
-
-            error_log(
-                $upload_errors[$image["error" ?? 0]] ?? "Unknown upload error.",
-            );
-
-            header("Location: edit-post.php?id=" . $_GET["id"]);
-            exit();
-        }
-
-        if ($title !== "" && $content !== "") {
-            $postId = update_post($_GET["id"], $title, $content);
-            if ($postId instanceof Exception) {
-                $_SESSION["error"] =
-                    "Something went wrong while saving the post.";
-                header("Location: edit-post.php?id=" . $_GET["id"]);
-                exit();
-            }
-            if ($image && $image["error"] === 0) {
-                update_post_image($_GET["id"], $filename);
-            }
-            header("Location: edit-post.php?id=" . $_GET["id"]);
-            exit();
-        }
-    }
-    ?>
+    <?php require_once "../components/header.php"; ?>
 
     <main class="flex flex-1 items-start justify-center p-8 bg-offwhite">
         <div class="w-full max-w-2xl flex flex-col gap-4">

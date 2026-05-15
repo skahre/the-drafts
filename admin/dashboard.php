@@ -1,4 +1,57 @@
-<?php require_once "utils/bases.php"; ?>
+<?php
+require_once "../utils/bases.php";
+require_once "../components/icons.php";
+require_once "../db/db.php";
+require_once "../utils/fileValidation.php";
+require_once "../components/profileImage.php";
+
+$redirectUrl = BASE . "/welcome.php";
+
+if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
+    header("Location: $redirectUrl");
+    exit();
+}
+
+$avatarError = $_SESSION["avatar_error"] ?? "";
+unset($_SESSION["avatar_error"]);
+
+if ($_POST) {
+    if (
+        isset($_FILES["profile_image"]) &&
+        $_FILES["profile_image"]["error"] === 0
+    ) {
+        try {
+            $filename = upload_image(
+                $_FILES["profile_image"],
+                __DIR__ . "/../uploads/",
+            );
+            update_profile_image($_SESSION["user_id"], $filename);
+        } catch (RuntimeException $e) {
+            $_SESSION["avatar_error"] = $e->getMessage();
+        }
+    }
+
+    $displayName = $_POST["display_name"] ?? "";
+    $bio = $_POST["bio"] ?? "";
+    update_user_info($_SESSION["user_id"], $displayName, $bio);
+
+    header("Location: dashboard.php");
+    exit();
+}
+
+$currentUser = get_user_by_id($_SESSION["user_id"]);
+$profileImage = $currentUser["profile_image"] ?? null;
+
+$posts = get_posts_by_user($_SESSION["user_id"]);
+
+$info_user = [
+    "name" => $currentUser["title"] ?? $currentUser["username"],
+    "username" => $currentUser["username"],
+    "bio" => $currentUser["presentation"] ?? null,
+    "id" => $currentUser["id"],
+    "profile_image" => $profileImage,
+];
+?>
 
 <!DOCTYPE html>
 <html lang="sv">
@@ -8,67 +61,13 @@
 </head>
 <body>
 
-    <?php
-    require_once "../components/header.php";
-    require_once "../components/icons.php";
-    require_once "../db/db.php";
-    require_once "../utils/fileValidation.php";
-    require_once "../components/profileImage.php";
-
-    $redirectUrl = BASE . "/welcome.php";
-
-    if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
-        header("Location: $redirectUrl");
-        exit();
-    }
-
-    $avatarError = $_SESSION["avatar_error"] ?? "";
-    unset($_SESSION["avatar_error"]);
-
-    if ($_POST) {
-        if (
-            isset($_FILES["profile_image"]) &&
-            $_FILES["profile_image"]["error"] === 0
-        ) {
-            try {
-                $filename = upload_image(
-                    $_FILES["profile_image"],
-                    __DIR__ . "/../uploads/",
-                );
-                update_profile_image($_SESSION["user_id"], $filename);
-            } catch (RuntimeException $e) {
-                $_SESSION["avatar_error"] = $e->getMessage();
-            }
-        }
-
-        $displayName = $_POST["display_name"] ?? "";
-        $bio = $_POST["bio"] ?? "";
-        update_user_info($_SESSION["user_id"], $displayName, $bio);
-
-        header("Location: dashboard.php");
-        exit();
-    }
-
-    $currentUser = get_user_by_id($_SESSION["user_id"]);
-    $profileImage = $currentUser["profile_image"] ?? null;
-
-    $posts = get_posts_by_user($_SESSION["user_id"]);
-    ?>
+    <?php require_once "../components/header.php"; ?>
 
     <main class="flex flex-row p-4 gap-4 flex-1 bg-offwhite">
 
         <aside class="flex flex-col gap-4 w-72 shrink-0">
 
-            <?php
-            $info_user = [
-                "name" => $currentUser["title"] ?? $currentUser["username"],
-                "username" => $currentUser["username"],
-                "bio" => $currentUser["presentation"] ?? null,
-                "id" => $currentUser["id"],
-                "profile_image" => $profileImage,
-            ];
-            require_once "../components/info.php";
-            ?>
+            <?php require_once "../components/info.php"; ?>
 
             <div class="bg-white rounded-2xl p-6 flex flex-col gap-4">
                 <h2 class="font-bold">
