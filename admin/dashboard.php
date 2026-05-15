@@ -13,8 +13,10 @@
     require_once "../utils/fileValidation.php";
     require_once "../components/profileImage.php";
 
+    $redirectUrl = BASE . "/welcome.php";
+
     if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
-        header("Location: /welcome.php");
+        header("Location: $redirectUrl");
         exit();
     }
 
@@ -172,7 +174,7 @@
             <div class="flex flex-col gap-3">
 
                 <?php foreach ($posts as $post): ?>
-                    <div class="bg-white rounded-2xl p-5 flex items-center justify-between gap-4">
+                    <div class="relative bg-white rounded-2xl p-5 flex items-center justify-between gap-4">
                         <div class="flex flex-col gap-1 flex-1 min-w-0">
                             <p class="font-semibold truncate"><?= htmlspecialchars(
                                 $post["title"],
@@ -184,11 +186,11 @@
                                 "created_at"
                             ] ?></p>
                         </div>
-                        <div class="flex gap-2 shrink-0">
-                            <a 
+                        <div class="relative z-10 flex gap-2 shrink-0">
+                            <a
                             href="<?= BASE ?>/admin/edit-post.php?id=<?= $post[
     "id"
-] ?>" 
+] ?>"
                             class="px-3 py-1.5 rounded-lg border border-gray text-sm hover:bg-offwhite transition-colors"
                             >
                                 Edit
@@ -197,14 +199,17 @@
                                 <input type="hidden" name="delete_id" value="<?= $post[
                                     "id"
                                 ] ?>">
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     class="px-3 py-1.5 rounded-lg border border-gray text-red-600 text-sm hover:bg-red-50 transition-colors cursor-pointer"
                                 >
                                     Remove
                                 </button>
                             </form>
                         </div>
+                        <a class="absolute inset-0 rounded-2xl" href="<?= BASE ?>/admin/post.php?id=<?= $post[
+    "id"
+] ?>"></a>
                     </div>
                     <?php endforeach; ?>
 

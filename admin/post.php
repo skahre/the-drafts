@@ -3,7 +3,7 @@ require_once "../components/header.php";
 require_once "../components/icons.php";
 require_once "../db/db.php";
 
-// Redirect to welcome page if not logged in
+// Redirect to blog page if not logged in
 if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
     header("Location: /blog.php");
     exit();
@@ -27,7 +27,7 @@ if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
                     <?= icon("arrow-left", "w-4 h-4") ?>
                     Back to dashboard
                 </a>
-                <a href="<?= BASE ?>/admin/edit-post.php" class="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg bg-primary hover:opacity-90 transition-opacity">
+                <a href="<?= BASE ?>/admin/edit-post.php?id=<?= $_GET['id'] ?? '' ?>" class="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg bg-primary hover:opacity-90 transition-opacity">
                     <?= icon("pencil", "w-4 h-4") ?>
                     Edit post
                 </a>
