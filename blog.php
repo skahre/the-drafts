@@ -1,22 +1,43 @@
+<?php require_once "utils/bases.php"; ?>
+
 <!DOCTYPE html>
 <html lang="sv">
 <head>
     <link rel="stylesheet" href="css/output.css">
-    <title>Blog | The Drafts</title>
+    <title><?= htmlspecialchars(
+        $blogger["title"] ?? ($blogger["username"] ?? "Blog"),
+    ) ?>  | The Drafts</title>
 </head>
 <body>
+    <?php
+    require_once "components/header.php";
+    require_once "db/db.php";
 
-    <?php require_once "components/header.php"; ?>
+    $redirectUrl = BASE . "/welcome.php";
 
+    if ($_GET["id"]) {
+        $postId = $_GET["id"];
+        $post = get_post_by_id($postId);
+        if (!$post) {
+            header("Location: $redirectUrl");
+            exit();
+        }
+        $image = get_image_by_post($postId);
+        $blogger = get_user_by_id($post["user_id"]);
+    } else {
+        header("Location: $redirectUrl");
+        exit();
+    }
+    ?>
     <main class="flex p-4 gap-4 flex-1 bg-offwhite">
         <aside class="flex flex-col gap-4 flex-1 min-w-0">
             <?php
             // PLACEHOLDER: Fetch blogger information from database
             $info_user = [
                 "profile_image" => $blogger["profile_image"] ?? null,
-                "name" => $blogger["name"] ?? "Unknown Blogger",
+                "name" => $blogger["title"] ?? "Unknown Blogger",
                 "username" => $blogger["username"] ?? "place_holder",
-                "bio" => $blogger["bio"] ?? null,
+                "bio" => $blogger["presentation"] ?? null,
             ];
 
             // Include same info component as in profile page
@@ -26,7 +47,7 @@
             include "components/menu.php";
             ?>
         </aside>
-        <section class="">
+        <section class="w-2xl">
             <?php require_once "components/content.php"; ?>
         </section>
         <div class="flex-1"></div>

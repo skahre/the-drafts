@@ -1,3 +1,6 @@
+<?php require_once "utils/bases.php"; ?>
+
+
 <!DOCTYPE html>
 <html lang="sv">
 <head>

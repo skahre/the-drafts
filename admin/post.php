@@ -1,24 +1,46 @@
-<?php
-require_once "../components/header.php";
-require_once "../components/icons.php";
-require_once "../db/db.php";
+<?php require_once "utils/bases.php"; ?>
 
-// Redirect to blog page if not logged in
-if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
-    header("Location: /blog.php");
-    exit();
-}
-?>
 <!DOCTYPE html>
 <html lang="sv">
 <head>
     <link rel="stylesheet" href="../css/output.css">
     <title><?= htmlspecialchars(
-        $saved["title"] ?? "View Post",
+        $post["title"] ?? "View Post",
     ) ?> | The Drafts</title>
 </head>
 <body>
+    <?php
+    require_once "../components/header.php";
+    require_once "../components/icons.php";
+    require_once "../db/db.php";
 
+    // Redirect to blog page if not logged in
+    if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
+        header("Location: /blog.php");
+        exit();
+    }
+
+    // TODO: Replace with actual blog post
+    $authRedirectUrl = BASE . "/blog.php";
+    $postRedirectUrl = BASE . "/admin/dashboard.php";
+
+    if ($_GET["id"]) {
+        $postId = $_GET["id"];
+        $post = get_post_by_id($postId);
+        if (!$post) {
+            header("Location: $postRedirectUrl");
+            exit();
+        }
+        if ($post["user_id"] !== $_SESSION["user_id"]) {
+            header("Location: $authRedirectUrl");
+            exit();
+        }
+        $image = get_image_by_post($postId);
+    } else {
+        header("Location: $postRedirectUrl");
+        exit();
+    }
+    ?>
     <main class="flex flex-1 items-start justify-center p-8 bg-offwhite">
         <div class="w-full max-w-2xl flex flex-col gap-4">
 
@@ -27,7 +49,8 @@ if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
                     <?= icon("arrow-left", "w-4 h-4") ?>
                     Back to dashboard
                 </a>
-                <a href="<?= BASE ?>/admin/edit-post.php?id=<?= $_GET['id'] ?? '' ?>" class="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg bg-primary hover:opacity-90 transition-opacity">
+                <a href="<?= BASE ?>/admin/edit-post.php?id=<?= $_GET["id"] ??
+    "" ?>" class="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg bg-primary hover:opacity-90 transition-opacity">
                     <?= icon("pencil", "w-4 h-4") ?>
                     Edit post
                 </a>

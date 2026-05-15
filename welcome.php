@@ -1,3 +1,5 @@
+<?php require_once "utils/bases.php"; ?>
+
 <!DOCTYPE html>
 <html lang="sv">
 <head>
@@ -33,7 +35,7 @@
 
                 <!-- Loop through posts and display them -->
                 <?php foreach ($posts as $post): ?>
-                    <div class="w-full flex flex-col bg-white rounded-2xl p-8 gap-4">
+                    <div class="relative w-full flex flex-col bg-white rounded-2xl p-8 gap-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <?php display_profile_image(
@@ -63,6 +65,9 @@
                         <p class="truncate-overflow blog-text text-sm"><?= htmlspecialchars(
                             $post["content"],
                         ) ?></p>
+                        <a class="absolute inset-0 rounded-2xl" href="<?= BASE ?>/blog.php?id=<?= htmlspecialchars(
+    $post["id"],
+) ?>"></a>
                     </div>
                 <?php endforeach; ?>
 
