@@ -17,12 +17,10 @@ unset($_SESSION["avatar_error"]);
 
 if ($_POST) {
     if (isset($_POST["delete_id"])) {
-        $deleteId = $_POST["delete_id"];
+        $_SESSION["deleteID"] = $_POST["delete_id"];
 
-        if (get_post_by_id($deleteId)["user_id"] === $_SESSION["user_id"]) {
-            delete_post($deleteId);
-        }
-        header("Location: dashboard.php");
+        $deleteRedirect = BASE . "/utils/deletePost.php";
+        header("Location: $deleteRedirect");
         exit();
     }
 

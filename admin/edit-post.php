@@ -42,6 +42,13 @@ $saved = $_SESSION["form"] ?? [];
 unset($_SESSION["form"]);
 
 if ($_POST) {
+    if (isset($_POST["delete_id"])) {
+        $_SESSION["deleteID"] = $_POST["delete_id"];
+
+        header("Location: deletePost.php");
+        exit();
+    }
+
     $title = $_POST["title"] ?? "";
     $image = $_FILES["image-input"] ?? null;
     $content = $_POST["content"] ?? "";
@@ -109,7 +116,7 @@ if ($_POST) {
             <div class="w-full flex flex-row justify-between items-center">
                 <a 
                 href="<?= BASE ?>/admin/dashboard.php" 
-                class="flex items-center justify-center gap-1.5  text-sm text-gray hover:text-black transition-colors">
+                class="flex items-center justify-center gap-1.5 text-sm text-gray hover:text-black transition-colors">
                     <?= icon("arrow-left", "w-4 h-4") ?>
                     Back to dashboard
                 </a>
