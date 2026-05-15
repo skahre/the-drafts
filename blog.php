@@ -1,4 +1,24 @@
-<?php require_once "utils/bases.php"; ?>
+<?php
+require_once "utils/bases.php";
+require_once "db/db.php";
+
+$redirectUrl = BASE . "/welcome.php";
+
+if ($_GET["id"] && $_GET["post_id"]) {
+    $bloggerId = $_GET["id"];
+    $postId = $_GET["post_id"];
+    $post = get_post_by_id($postId);
+    $blogger = get_user_by_id($bloggerId);
+    if (!$post || !$blogger || $post["user_id"] != $bloggerId) {
+        header("Location: $redirectUrl");
+        exit();
+    }
+    $image = get_image_by_post($postId);
+} else {
+    header("Location: $redirectUrl");
+    exit();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="sv">
@@ -9,26 +29,7 @@
     ) ?>  | The Drafts</title>
 </head>
 <body>
-    <?php
-    require_once "components/header.php";
-    require_once "db/db.php";
-
-    $redirectUrl = BASE . "/welcome.php";
-
-    if ($_GET["id"]) {
-        $postId = $_GET["id"];
-        $post = get_post_by_id($postId);
-        if (!$post) {
-            header("Location: $redirectUrl");
-            exit();
-        }
-        $image = get_image_by_post($postId);
-        $blogger = get_user_by_id($post["user_id"]);
-    } else {
-        header("Location: $redirectUrl");
-        exit();
-    }
-    ?>
+    <?php require_once "components/header.php"; ?>
     <main class="flex p-4 gap-4 flex-1 bg-offwhite">
         <aside class="flex flex-col gap-4 flex-1 min-w-0">
             <?php

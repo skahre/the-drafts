@@ -66,8 +66,8 @@
                             $post["content"],
                         ) ?></p>
                         <a class="absolute inset-0 rounded-2xl" href="<?= BASE ?>/blog.php?id=<?= htmlspecialchars(
-    $post["id"],
-) ?>"></a>
+    $post["user_id"],
+) ?>&post_id=<?= htmlspecialchars($post["id"]) ?>"></a>
                     </div>
                 <?php endforeach; ?>
 
