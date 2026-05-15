@@ -16,6 +16,16 @@ $avatarError = $_SESSION["avatar_error"] ?? "";
 unset($_SESSION["avatar_error"]);
 
 if ($_POST) {
+    if (isset($_POST["delete_id"])) {
+        $deleteId = $_POST["delete_id"];
+
+        if (get_post_by_id($deleteId)["user_id"] === $_SESSION["user_id"]) {
+            delete_post($deleteId);
+        }
+        header("Location: dashboard.php");
+        exit();
+    }
+
     if (
         isset($_FILES["profile_image"]) &&
         $_FILES["profile_image"]["error"] === 0
@@ -202,6 +212,7 @@ $info_user = [
                                 ] ?>">
                                 <button
                                     type="submit"
+                                    onclick="return confirm('Are you sure you want to delete this post? This cannot be undone.')"
                                     class="px-3 py-1.5 rounded-lg border border-gray text-red-600 text-sm hover:bg-red-50 transition-colors cursor-pointer"
                                 >
                                     Remove

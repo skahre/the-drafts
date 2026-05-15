@@ -113,6 +113,28 @@ function change_username($id, $newUsername)
     return $affectedRows;
 }
 
+// Deletes a post based on its id
+function delete_post($id)
+{
+    $connection = connect();
+
+    $sql = "DELETE FROM posts WHERE id = ?";
+    $stmt = mysqli_prepare($connection, $sql);
+
+    if (!$stmt) {
+        die("Prepare failed: " . mysqli_error($connection));
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+
+    $affectedRows = mysqli_stmt_affected_rows($stmt);
+
+    mysqli_stmt_close($stmt);
+
+    return $affectedRows;
+}
+
 // Deletes a user based on their id
 function delete_user($id)
 {

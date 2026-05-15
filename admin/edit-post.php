@@ -106,10 +106,26 @@ if ($_POST) {
     <main class="flex flex-1 items-start justify-center p-8 bg-offwhite">
         <div class="w-full max-w-2xl flex flex-col gap-4">
 
-            <a href="<?= BASE ?>/admin/dashboard.php" class="flex items-center gap-1.5 self-start text-sm text-gray hover:text-black transition-colors">
-                <?= icon("arrow-left", "w-4 h-4") ?>
-                Back to dashboard
-            </a>
+            <div class="w-full flex flex-row justify-between items-center">
+                <a 
+                href="<?= BASE ?>/admin/dashboard.php" 
+                class="flex items-center justify-center gap-1.5  text-sm text-gray hover:text-black transition-colors">
+                    <?= icon("arrow-left", "w-4 h-4") ?>
+                    Back to dashboard
+                </a>
+                <form method="POST">
+                    <input type="hidden" name="delete_id" value="<?= $post[
+                        "id"
+                    ] ?>">
+                    <button
+                        type="submit"
+                        onclick="return confirm('Are you sure you want to delete this post? This cannot be undone.')"
+                        class="px-3 py-1.5 rounded-lg bg-error text-white text-sm hover:opacity-90 transition-colors cursor-pointer"
+                    >
+                        Remove
+                    </button>
+                </form>
+            </div>
 
             <div class="bg-white rounded-2xl p-8 flex flex-col gap-6">
 
@@ -480,6 +496,7 @@ if ($_POST) {
             </form>
 
             </div>
+            
         </div>
     </main>
 
