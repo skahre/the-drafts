@@ -35,6 +35,7 @@ if ($_POST) {
         exit();
     } else {
         // Set session variables and redirect to dashboard on successful registration
+        session_regenerate_id(true);
         $_SESSION["username"] = $_POST["username"];
         $_SESSION["user_id"] = $result;
         header("Location: admin/dashboard.php");

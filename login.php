@@ -15,6 +15,22 @@ $error = $_SESSION["error"] ?? "";
 unset($_SESSION["error"]);
 
 if ($_POST) {
+    if (!$_POST["username"]) {
+        $_SESSION["error"] = "Username can't be empty";
+        header("Location: login.php");
+        exit();
+    }
+
+    if (!$_POST["password"]) {
+        $_SESSION["error"] = "Password can't be empty";
+        header("Location: login.php");
+        exit();
+    } elseif (strlen($_POST["password"]) < 6) {
+        $_SESSION["error"] = "Password must be at least 6 characters.";
+        header("Location: login.php");
+        exit();
+    }
+
     // Only save lowercase usernames in db
     $username = strtolower($_POST["username"]);
 
@@ -26,6 +42,7 @@ if ($_POST) {
         $user !== null &&
         password_verify($_POST["password"], $user["password"])
     ) {
+        session_regenerate_id(true);
         $_SESSION["username"] = $username;
         $_SESSION["user_id"] = $user["id"];
         header("Location: admin/dashboard.php");
