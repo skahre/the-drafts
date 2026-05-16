@@ -12,7 +12,7 @@ if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
 
 $redirect_url = BASE . "/admin/dashboard.php";
 
-if ($_GET["id"]) {
+if (isset($_GET["id"])) {
     $post_id = $_GET["id"];
     $post = get_post_by_id($post_id);
     if (!$post) {
@@ -64,16 +64,6 @@ if ($_POST) {
             exit();
         }
     } elseif ($image && $image["error"] !== 4) {
-        $upload_errors = [
-            0 => "No error, the file uploaded successfully.",
-            1 => "Image too big (PHP limit).",
-            2 => "Image too big (HTML form limit).",
-            3 => "Image only partially uploaded.",
-            4 => "No file selected.",
-            6 => "Temporary folder missing.",
-            7 => "Failed to write to disk.",
-            8 => "Uppladdningen stoppad.",
-        ];
         $_SESSION["error"] = "Something went wrong while uploading image.";
 
         error_log(

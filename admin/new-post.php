@@ -31,16 +31,6 @@ if ($_POST) {
             exit();
         }
     } elseif ($image && $image["error"] !== 4) {
-        $upload_errors = [
-            0 => "No error, the file uploaded successfully.",
-            1 => "Image too big (PHP limit).",
-            2 => "Image too big (HTML form limit).",
-            3 => "Image only partially uploaded.",
-            4 => "No file selected.",
-            6 => "Temporary folder missing.",
-            7 => "Failed to write to disk.",
-            8 => "Uppladdningen stoppad.",
-        ];
         $_SESSION["error"] = "Something went wrong while uploading image.";
 
         error_log(

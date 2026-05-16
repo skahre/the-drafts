@@ -1,5 +1,16 @@
 <?php
 
+$upload_errors = [
+    0 => "No error, the file uploaded successfully.",
+    1 => "Image too big (PHP limit).",
+    2 => "Image too big (HTML form limit).",
+    3 => "Image only partially uploaded.",
+    4 => "No file selected.",
+    6 => "Temporary folder missing.",
+    7 => "Failed to write to disk.",
+    8 => "Uppladdningen stoppad.",
+];
+
 // Validates the type of an uploaded image file
 function validate_image_type($file)
 {

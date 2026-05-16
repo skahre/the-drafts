@@ -76,7 +76,9 @@ if ($_POST) {
                         required
                         class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary"
                     >
-                    <span class="text-xs text-error"><?php echo $error; ?></span>
+                    <span class="text-xs text-error"><?php echo htmlspecialchars(
+                        $error,
+                    ); ?></span>
                 </div>
 
                 <!-- Use the password_input component for both password fields -->

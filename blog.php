@@ -4,7 +4,7 @@ require_once "db/db.php";
 
 $redirect_url = BASE . "/welcome.php";
 
-if ($_GET["id"]) {
+if (isset($_GET["id"])) {
     $blogger_id = $_GET["id"];
     $blogger = get_user_by_id($blogger_id);
     if (!$blogger) {

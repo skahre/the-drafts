@@ -11,7 +11,7 @@ if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
 
 $post_redirect_url = BASE . "/admin/dashboard.php";
 
-if ($_GET["id"]) {
+if (isset($_GET["id"])) {
     $post_id = $_GET["id"];
     $post = get_post_by_id($post_id);
     if (!$post) {
