@@ -45,7 +45,7 @@ if ($_POST) {
     if (isset($_POST["delete_id"])) {
         $_SESSION["deleteID"] = $_POST["delete_id"];
 
-        header("Location: deletePost.php");
+        header("Location: ../utils/deletePost.php");
         exit();
     }
 
