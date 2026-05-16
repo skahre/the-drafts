@@ -4,18 +4,29 @@ require_once "db/db.php";
 
 $redirect_url = BASE . "/welcome.php";
 
-if ($_GET["id"] && $_GET["post_id"]) {
+if ($_GET["id"]) {
     $blogger_id = $_GET["id"];
-    $post_id = $_GET["post_id"];
-    $post = get_post_by_id($post_id);
     $blogger = get_user_by_id($blogger_id);
-    if (!$post || !$blogger || $post["user_id"] != $blogger_id) {
-        header("Location: $redirect_url");
+    if (!$blogger) {
+        echo "wrong";
+        //header("Location: $redirect_url");
         exit();
     }
 } else {
-    header("Location: $redirect_url");
+    echo "hihi";
+    //header("Location: $redirect_url");
     exit();
+}
+
+$user_posts = get_posts_by_user($blogger_id);
+
+$post_id = $_GET["post_id"] ?? null;
+
+if ($post_id) {
+    $display_post = get_post_by_id($post_id);
+} else {
+    $display_post = $user_posts[0];
+    $post_id = $display_post["id"];
 }
 
 $info_user = [
@@ -28,9 +39,9 @@ $info_user = [
 $image = get_image_by_post($post_id);
 
 $post_info = [
-    "title" => $post["title"],
-    "created_at" => $post["created_at"],
-    "content" => $post["content"],
+    "title" => $display_post["title"],
+    "created_at" => $display_post["created_at"],
+    "content" => $display_post["content"],
     "image" => $image,
 ];
 ?>

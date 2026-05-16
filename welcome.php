@@ -7,6 +7,7 @@ require_once "db/db.php";
 
 // Fetch all posts from the database
 $posts = get_all_posts();
+$bloggers = get_users();
 ?>
 
 <!DOCTYPE html>
@@ -23,9 +24,21 @@ $posts = get_all_posts();
         <!-- Sidebar with all bloggers -->
         <div class="flex flex-1 min-w-0 bg-white h-[80lvh] rounded-2xl">
             <ul class="list-none p-2 w-full flex flex-col gap-1">
-                <li class="border border-gray px-2 py-4 rounded-lg flex justify-center"><a href="blog.php">Example Blogger</a></li>
-                <li class="border border-gray px-2 py-4 rounded-lg flex justify-center">Sandra Kåhre</li>
-                <li class="border border-gray px-2 py-4 rounded-lg flex justify-center">Hell YEZZ</li>
+                <?php foreach ($bloggers as $user): ?>
+                <li class="border border-gray rounded-lg">
+                    <a href="blog.php?id=<?= $user[
+                        "id"
+                    ] ?>" class="px-2 py-4 flex justify-start gap-4 items-center">
+                    <?php display_profile_image(
+                        $user["profile_image"],
+                        $user["username"],
+                    ); ?>
+                    <p class="truncate"><?= htmlspecialchars(
+                        $user["title"] ?? $user["username"],
+                    ) ?></p>
+                    </a>
+                </li>
+                <?php endforeach; ?>
             </ul>
         </div>
         <div class="w-4xl flex flex-col items-center gap-8 p-8">
