@@ -137,8 +137,9 @@ if ($_POST) {
             <div class="bg-white rounded-2xl p-8 flex flex-col gap-6">
 
             <form
-                method="POST" 
-                enctype="multipart/form-data" 
+                id="edit-form"
+                method="POST"
+                enctype="multipart/form-data"
                 class="flex flex-col gap-4"
             >
                 <div id="title-view" class="<?= $isEditing
@@ -225,7 +226,7 @@ if ($_POST) {
                             id="image-preview-img"
                             src="<?= $current_image
                                 ? htmlspecialchars(
-                                    BASE . "/uploads/" . $currentImage,
+                                    BASE . "/uploads/" . $current_image,
                                 )
                                 : "" ?>"
                             data-original-src="<?= $current_image
@@ -373,7 +374,7 @@ if ($_POST) {
                             syncControls();
                         });
 
-                        document.querySelector('form').addEventListener('submit', e => {
+                        document.getElementById('edit-form').addEventListener('submit', e => {
                             if (input.files[0]) {
                                 const f = input.files[0];
                                 const err = f.size > maxBytes
@@ -469,7 +470,7 @@ if ($_POST) {
                         const originalTitle   = document.getElementById('title-input').value;
                         const originalContent = document.getElementById('content-input').value;
 
-                        document.querySelector('form').addEventListener('submit', () => {
+                        document.getElementById('edit-form').addEventListener('submit', () => {
                             submitting = true;
                         });
 
@@ -487,7 +488,9 @@ if ($_POST) {
 
                 <div class="flex gap-3 justify-end">
                     <a 
-                        href="<?= BASE ?>/admin/dashboard.php" 
+                        href="<?= BASE ?>/admin/post.php?id=<?= htmlspecialchars(
+    $post_id,
+) ?>" 
                         class="px-4 py-2 rounded-lg border border-gray text-sm hover:bg-offwhite transition-colors"
                     >
                         Cancel
