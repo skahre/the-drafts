@@ -91,6 +91,10 @@ if ($_POST) {
                     "confirm-password-error",
                 ); ?>
 
+                <p class="text-xs text-center text-(--gray-color)">
+                    By signing up you agree that we store your username, password hash, profile image, and posts. Read our <a href="privacy.php" class="underline font-semibold text-(--text-color)">Privacy Policy</a>.
+                </p>
+
                 <button
                     type="submit"
                     class="bg-primary font-semibold py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer mt-2"
