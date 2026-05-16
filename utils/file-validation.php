@@ -30,13 +30,13 @@ function upload_image($file, $upload_dir)
     }
 
     // Uses validate_image_type to check the MIME type and get the correct file extension
-    $fileExtension = validate_image_type($file);
-    if ($fileExtension === false) {
+    $file_extension = validate_image_type($file);
+    if ($file_extension === false) {
         throw new RuntimeException("Only JPG and PNG images are allowed.");
     }
 
     // Generate a unique filename different from the original
-    $filename = bin2hex(random_bytes(16)) . "." . $fileExtension;
+    $filename = bin2hex(random_bytes(16)) . "." . $file_extension;
     if (!move_uploaded_file($file["tmp_name"], $upload_dir . $filename)) {
         throw new RuntimeException(
             "Something went wrong while uploading the file.",
@@ -49,8 +49,8 @@ function upload_image($file, $upload_dir)
 
 function delete_image($filename, $upload_dir)
 {
-    $filePath = $upload_dir . $filename;
+    $file_path = $upload_dir . $filename;
     if (file_exists($filePath)) {
-        unlink($filePath);
+        unlink($file_path);
     }
 }

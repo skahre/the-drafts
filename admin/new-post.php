@@ -2,7 +2,7 @@
 require_once "../utils/bases.php";
 require_once "../components/icons.php";
 require_once "../db/db.php";
-require_once "../utils/fileValidation.php";
+require_once "../utils/file-validation.php";
 
 // Redirect to welcome page if not logged in
 if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
@@ -11,7 +11,7 @@ if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
 }
 
 // Initialize variables for form data and errors
-$imageError = $_SESSION["error"] ?? "";
+$image_Error = $_SESSION["error"] ?? "";
 unset($_SESSION["error"]);
 $saved = $_SESSION["form"] ?? [];
 unset($_SESSION["form"]);
@@ -52,14 +52,14 @@ if ($_POST) {
     }
 
     if ($title !== "" && $content !== "") {
-        $postId = add_post($_SESSION["user_id"], $title, $content);
+        $post_id = add_post($_SESSION["user_id"], $title, $content);
         if ($postId instanceof Exception) {
             $_SESSION["error"] = "Something went wrong while saving the post.";
             header("Location: new-post.php");
             exit();
         }
         if ($image && $image["error"] === 0) {
-            add_image($postId, $filename);
+            add_image($post_id, $filename);
         }
         header("Location: dashboard.php");
         exit();
@@ -145,12 +145,12 @@ if ($_POST) {
                             <?= icon("trash", "w-4 h-4 text-gray") ?>
                         </button>
                     </div>
-                    <div id="image-error" class="<?= $imageError
+                    <div id="image-error" class="<?= $image_error
                         ? "flex"
                         : "hidden" ?> items-center gap-1.5 text-xs text-error">
                         <?= icon("alert-circle", "w-4 h-4 shrink-0") ?>
                         <span id="error-text"><?= htmlspecialchars(
-                            $imageError,
+                            $image_error,
                         ) ?></span>
                     </div>
                 </div>

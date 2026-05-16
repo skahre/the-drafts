@@ -16,9 +16,9 @@ unset($_SESSION["error"]);
 
 // If form is submitted, attempt to register the user
 if ($_POST) {
-    $hashedPassword = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $hashed_password = password_hash($_POST["password"], PASSWORD_DEFAULT);
 
-    $result = add_user(strtolower($_POST["username"]), $hashedPassword);
+    $result = add_user(strtolower($_POST["username"]), $hashed_password);
 
     // Check if the result is an exception and handle it accordingly
     if ($result instanceof mysqli_sql_exception) {

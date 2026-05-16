@@ -2,7 +2,7 @@
 // Displays user information such as profile picture, name, username, and bio
 // Information is passed in the $info_user variable and can be resued across different pages
 
-require_once __DIR__ . "/profileImage.php"; ?>
+require_once __DIR__ . "/profile-image.php"; ?>
 
 <div class="bg-white rounded-2xl p-6 flex flex-col gap-4">
     <div class="flex items-center gap-3">

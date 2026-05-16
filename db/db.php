@@ -59,7 +59,7 @@ function get_result($stmt)
 }
 
 // Adds a new user to the database
-function add_user($username, $hashedPassword)
+function add_user($username, $hashed_password)
 {
     $connection = connect();
 
@@ -71,7 +71,7 @@ function add_user($username, $hashedPassword)
         die("Prepare failed: " . mysqli_error($connection));
     }
 
-    mysqli_stmt_bind_param($stmt, "ss", $username, $hashedPassword);
+    mysqli_stmt_bind_param($stmt, "ss", $username, $hashed_password);
 
     try {
         mysqli_stmt_execute($stmt);
@@ -81,15 +81,15 @@ function add_user($username, $hashedPassword)
     }
 
     // Gets auto-incremented id
-    $newId = mysqli_insert_id($connection);
+    $new_id = mysqli_insert_id($connection);
 
     mysqli_stmt_close($stmt);
 
-    return $newId; // Return the new user's id
+    return $new_id; // Return the new user's id
 }
 
 // Changes a user's username based on their id
-function change_username($id, $newUsername)
+function change_username($id, $new_username)
 {
     $connection = connect();
 
@@ -100,17 +100,17 @@ function change_username($id, $newUsername)
         die("Prepare failed: " . mysqli_error($connection));
     }
 
-    mysqli_stmt_bind_param($stmt, "si", $newUsername, $id);
+    mysqli_stmt_bind_param($stmt, "si", $new_username, $id);
     mysqli_stmt_execute($stmt);
 
-    $affectedRows = mysqli_stmt_affected_rows($stmt);
+    $affected_rows = mysqli_stmt_affected_rows($stmt);
 
     mysqli_stmt_close($stmt);
 
     // Returns amount of affected rows
     // 1+ = something was updated
     // 0  = nothing was changed (e.g., wrong id or same value)
-    return $affectedRows;
+    return $affected_rows;
 }
 
 // Deletes a post based on its id
@@ -128,11 +128,11 @@ function delete_post($id)
     mysqli_stmt_bind_param($stmt, "i", $id);
     mysqli_stmt_execute($stmt);
 
-    $affectedRows = mysqli_stmt_affected_rows($stmt);
+    $affected_rows = mysqli_stmt_affected_rows($stmt);
 
     mysqli_stmt_close($stmt);
 
-    return $affectedRows;
+    return $affected_rows;
 }
 
 // Deletes a user based on their id
@@ -150,14 +150,14 @@ function delete_user($id)
     mysqli_stmt_bind_param($stmt, "i", $id);
     mysqli_stmt_execute($stmt);
 
-    $affectedRows = mysqli_stmt_affected_rows($stmt);
+    $affected_rows = mysqli_stmt_affected_rows($stmt);
 
     mysqli_stmt_close($stmt);
 
     // Returns amount of affected rows:
     // 1+ = something was updated
     // 0  = nothing was changed (e.g., wrong id or same value)
-    return $affectedRows;
+    return $affected_rows;
 }
 
 // Retrieves a user from the database by their username
@@ -254,12 +254,12 @@ function add_post($user_id, $title, $content)
         return $e;
     }
 
-    $newId = mysqli_insert_id($connection);
+    $new_id = mysqli_insert_id($connection);
 
     mysqli_stmt_close($stmt);
 
     // Returns the id of the new post
-    return $newId;
+    return $new_id;
 }
 
 // Adds a new image to the database, linked to a post by its id
@@ -285,12 +285,12 @@ function add_image($post_id, $filename)
         return $e;
     }
 
-    $newId = mysqli_insert_id($connection);
+    $new_id = mysqli_insert_id($connection);
 
     mysqli_stmt_close($stmt);
 
     // Returns the id of the new image
-    return $newId;
+    return $new_id;
 }
 
 // Retrieves all posts by a specific user, sorted by creation date (newest first)
@@ -332,14 +332,14 @@ function update_profile_image($user_id, $filename)
     mysqli_stmt_bind_param($stmt, "si", $filename, $user_id);
     mysqli_stmt_execute($stmt);
 
-    $affectedRows = mysqli_stmt_affected_rows($stmt);
+    $affected_rows = mysqli_stmt_affected_rows($stmt);
 
     mysqli_stmt_close($stmt);
 
     // Returns amount of affected rows:
     // 1+ = something was updated
     // 0  = nothing was changed (e.g., wrong id or same value)
-    return $affectedRows;
+    return $affected_rows;
 }
 
 // Updates a user's display name and bio based on their id
@@ -358,14 +358,14 @@ function update_user_info($user_id, $display_name, $bio)
     mysqli_stmt_bind_param($stmt, "ssi", $display_name, $bio, $user_id);
     mysqli_stmt_execute($stmt);
 
-    $affectedRows = mysqli_stmt_affected_rows($stmt);
+    $affected_rows = mysqli_stmt_affected_rows($stmt);
 
     mysqli_stmt_close($stmt);
 
     // Returns amount of affected rows:
     // 1+ = something was updated
     // 0  = nothing was changed (e.g., wrong id or same value)
-    return $affectedRows;
+    return $affected_rows;
 }
 
 // Retrieves all posts with their authors' usernames and profile images, sorted by creation date (newest first)
@@ -452,14 +452,14 @@ function update_post($post_id, $title, $content)
     mysqli_stmt_bind_param($stmt, "ssi", $title, $content, $post_id);
     mysqli_stmt_execute($stmt);
 
-    $affectedRows = mysqli_stmt_affected_rows($stmt);
+    $affected_rows = mysqli_stmt_affected_rows($stmt);
 
     mysqli_stmt_close($stmt);
 
     // Returns amount of affected rows:
     // 1+ = something was updated
     // 0  = nothing was changed (e.g., wrong id or same value)
-    return $affectedRows;
+    return $affected_rows;
 }
 
 function update_post_image($post_id, $filename)
@@ -477,12 +477,12 @@ function update_post_image($post_id, $filename)
     mysqli_stmt_bind_param($stmt, "si", $filename, $post_id);
     mysqli_stmt_execute($stmt);
 
-    $affectedRows = mysqli_stmt_affected_rows($stmt);
+    $affected_rows = mysqli_stmt_affected_rows($stmt);
 
     mysqli_stmt_close($stmt);
 
     // Returns amount of affected rows:
     // 1+ = something was updated
     // 0  = nothing was changed (e.g., wrong id or same value)
-    return $affectedRows;
+    return $affected_rows;
 }

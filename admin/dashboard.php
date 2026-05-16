@@ -2,25 +2,25 @@
 require_once "../utils/bases.php";
 require_once "../components/icons.php";
 require_once "../db/db.php";
-require_once "../utils/fileValidation.php";
-require_once "../components/profileImage.php";
+require_once "../utils/file-validation.php";
+require_once "../components/profile-image.php";
 
-$redirectUrl = BASE . "/welcome.php";
+$redirect_url = BASE . "/welcome.php";
 
 if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
-    header("Location: $redirectUrl");
+    header("Location: $redirect_url");
     exit();
 }
 
-$avatarError = $_SESSION["avatar_error"] ?? "";
+$avatar_error = $_SESSION["avatar_error"] ?? "";
 unset($_SESSION["avatar_error"]);
 
 if ($_POST) {
     if (isset($_POST["delete_id"])) {
-        $_SESSION["deleteID"] = $_POST["delete_id"];
+        $_SESSION["delete_id"] = $_POST["delete_id"];
 
-        $deleteRedirect = BASE . "/utils/deletePost.php";
-        header("Location: $deleteRedirect");
+        $delete_redirect = BASE . "/utils/delete-post.php";
+        header("Location: $delete_redirect");
         exit();
     }
 
@@ -39,25 +39,25 @@ if ($_POST) {
         }
     }
 
-    $displayName = $_POST["display_name"] ?? "";
+    $display_name = $_POST["display_name"] ?? "";
     $bio = $_POST["bio"] ?? "";
-    update_user_info($_SESSION["user_id"], $displayName, $bio);
+    update_user_info($_SESSION["user_id"], $display_name, $bio);
 
     header("Location: dashboard.php");
     exit();
 }
 
-$currentUser = get_user_by_id($_SESSION["user_id"]);
-$profileImage = $currentUser["profile_image"] ?? null;
+$current_user = get_user_by_id($_SESSION["user_id"]);
+$profile_image = $current_user["profile_image"] ?? null;
 
 $posts = get_posts_by_user($_SESSION["user_id"]);
 
 $info_user = [
-    "name" => $currentUser["title"] ?? $currentUser["username"],
-    "username" => $currentUser["username"],
-    "bio" => $currentUser["presentation"] ?? null,
-    "id" => $currentUser["id"],
-    "profile_image" => $profileImage,
+    "name" => $current_user["title"] ?? $current_user["username"],
+    "username" => $current_user["username"],
+    "bio" => $current_user["presentation"] ?? null,
+    "id" => $current_user["id"],
+    "profile_image" => $profile_image,
 ];
 ?>
 
@@ -75,7 +75,7 @@ $info_user = [
 
         <aside class="flex flex-col gap-4 w-72 shrink-0">
 
-            <?php require_once "../components/info.php"; ?>
+            <?php require_once "../components/user-info.php"; ?>
 
             <div class="bg-white rounded-2xl p-6 flex flex-col gap-4">
                 <h2 class="font-bold">
@@ -87,15 +87,15 @@ $info_user = [
                         <label class="text-sm font-semibold">Profile picture</label>
                         <div class="flex items-center gap-3">
                             <div id="avatar-preview-wrap" class="w-14 h-14 rounded-full overflow-hidden bg-offwhite border border-gray flex items-center justify-center text-xl font-bold shrink-0">
-                                <?php if ($profileImage): ?>
+                                <?php if ($profile_image): ?>
                                     <img src="<?= BASE ?>/uploads/<?= htmlspecialchars(
-    $profileImage,
+    $profile_image,
 ) ?>" alt="Profile" class="w-full h-full object-cover">
                                 <?php else: ?>
                                     <?= strtoupper(
                                         substr(
-                                            $currentUser["title"] ??
-                                                $currentUser["username"],
+                                            $current_user["title"] ??
+                                                $current_user["username"],
                                             0,
                                             1,
                                         ),
@@ -111,11 +111,11 @@ $info_user = [
                                 <p class="text-xs text-gray text-center">JPG or PNG, max 3 MB</p>
                             </div>
                         </div>
-                        <?php if ($avatarError): ?>
+                        <?php if ($avatar_error): ?>
                             <div class="flex items-center gap-1.5 text-xs text-error">
                                 <?= icon("alert-circle", "w-4 h-4 shrink-0") ?>
                                 <span><?= htmlspecialchars(
-                                    $avatarError,
+                                    $avatar_error,
                                 ) ?></span>
                             </div>
                         <?php endif; ?>
@@ -126,7 +126,7 @@ $info_user = [
                             type="text"
                             name="display_name"
                             value="<?= htmlspecialchars(
-                                $currentUser["title"] ?? "",
+                                $current_user["title"] ?? "",
                             ) ?>"
                             class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary text-sm"
                         >
@@ -138,7 +138,7 @@ $info_user = [
                             rows="3"
                             class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary text-sm resize-none"
                         ><?= htmlspecialchars(
-                            $currentUser["presentation"] ?? "",
+                            $current_user["presentation"] ?? "",
                         ) ?></textarea>
                     </div>
                     <button

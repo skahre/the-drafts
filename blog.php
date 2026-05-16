@@ -2,19 +2,19 @@
 require_once "utils/bases.php";
 require_once "db/db.php";
 
-$redirectUrl = BASE . "/welcome.php";
+$redirect_url = BASE . "/welcome.php";
 
 if ($_GET["id"] && $_GET["post_id"]) {
-    $bloggerId = $_GET["id"];
-    $postId = $_GET["post_id"];
-    $post = get_post_by_id($postId);
-    $blogger = get_user_by_id($bloggerId);
-    if (!$post || !$blogger || $post["user_id"] != $bloggerId) {
-        header("Location: $redirectUrl");
+    $blogger_id = $_GET["id"];
+    $post_id = $_GET["post_id"];
+    $post = get_post_by_id($post_id);
+    $blogger = get_user_by_id($blogger_id);
+    if (!$post || !$blogger || $post["user_id"] != $blogger_id) {
+        header("Location: $redirect_url");
         exit();
     }
 } else {
-    header("Location: $redirectUrl");
+    header("Location: $redirect_url");
     exit();
 }
 
@@ -25,7 +25,7 @@ $info_user = [
     "bio" => $blogger["presentation"] ?? null,
 ];
 
-$image = get_image_by_post($postId);
+$image = get_image_by_post($post_id);
 
 $post_info = [
     "title" => $post["title"],
@@ -50,7 +50,7 @@ $post_info = [
             <?php
             // Include same info component as in profile page
             // Gets necessary data from $info_user array
-            include "components/info.php";
+            include "components/user-info.php";
 
             include "components/menu.php";
             ?>

@@ -2,7 +2,7 @@
 require_once "../utils/bases.php";
 require_once "../components/icons.php";
 require_once "../db/db.php";
-require_once "../utils/fileValidation.php";
+require_once "../utils/file-validation.php";
 
 // Redirect to welcome page if not logged in
 if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
@@ -10,42 +10,42 @@ if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
     exit();
 }
 
-$redirectUrl = BASE . "/admin/dashboard.php";
+$redirect_url = BASE . "/admin/dashboard.php";
 
 if ($_GET["id"]) {
-    $postId = $_GET["id"];
-    $post = get_post_by_id($postId);
+    $post_id = $_GET["id"];
+    $post = get_post_by_id($post_id);
     if (!$post) {
-        header("Location: $redirectUrl");
+        header("Location: $redirect_url");
         exit();
     }
     if ($post["user_id"] !== $_SESSION["user_id"]) {
-        header("Location: $redirectUrl");
+        header("Location: $redirect_url");
         exit();
     }
 } else {
-    header("Location: $redirectUrl");
+    header("Location: $redirect_url");
     exit();
 }
 
-$isEditing = $_SESSION["editing"] ?? false;
+$is_editing = $_SESSION["editing"] ?? false;
 unset($_SESSION["editing"]);
 
-$currentImage = get_image_by_post($postId)["filename"] ?? null;
-$currentTitle = $post["title"];
-$currentContent = $post["content"];
+$current_image = get_image_by_post($post_id)["filename"] ?? null;
+$current_title = $post["title"];
+$current_content = $post["content"];
 
 // Initialize variables for form data and errors
-$imageError = $_SESSION["error"] ?? "";
+$image_error = $_SESSION["error"] ?? "";
 unset($_SESSION["error"]);
 $saved = $_SESSION["form"] ?? [];
 unset($_SESSION["form"]);
 
 if ($_POST) {
     if (isset($_POST["delete_id"])) {
-        $_SESSION["deleteID"] = $_POST["delete_id"];
+        $_SESSION["delete_id"] = $_POST["delete_id"];
 
-        header("Location: ../utils/deletePost.php");
+        header("Location: ../utils/delete-post.php");
         exit();
     }
 
@@ -56,7 +56,7 @@ if ($_POST) {
     if ($image && $image["error"] === 0) {
         try {
             $filename = upload_image($image, __DIR__ . "/../uploads/");
-            delete_image($currentImage, __DIR__ . "/../uploads/");
+            delete_image($current_mage, __DIR__ . "/../uploads/");
         } catch (RuntimeException $e) {
             $_SESSION["error"] = $e->getMessage();
             $_SESSION["form"] = ["title" => $title, "content" => $content];
@@ -85,8 +85,8 @@ if ($_POST) {
     }
 
     if ($title !== "" && $content !== "") {
-        $postId = update_post($_GET["id"], $title, $content);
-        if ($postId instanceof Exception) {
+        $post_id = update_post($_GET["id"], $title, $content);
+        if ($post_id instanceof Exception) {
             $_SESSION["error"] = "Something went wrong while saving the post.";
             header("Location: edit-post.php?id=" . $_GET["id"]);
             exit();
@@ -145,14 +145,14 @@ if ($_POST) {
                     ? "hidden"
                     : "flex" ?> items-center gap-2">
                     <h1 class="text-2xl font-bold"><?= htmlspecialchars(
-                        $saved["title"] ?? $currentTitle,
+                        $saved["title"] ?? $current_title,
                     ) ?></h1>
                     <button type="button" id="edit-title-btn" class="p-1 text-gray hover:text-black transition-colors cursor-pointer">
                         <?= icon("pencil", "w-4 h-4") ?>
                     </button>
                 </div>
 
-                <div id="title-edit" class="<?= $isEditing
+                <div id="title-edit" class="<?= $is_editing
                     ? "flex"
                     : "hidden" ?> flex-col gap-1">
                     <div class="flex flex-row gap-1.5">
@@ -162,7 +162,7 @@ if ($_POST) {
                             name="title"
                             required
                             value="<?= htmlspecialchars(
-                                $saved["title"] ?? $currentTitle,
+                                $saved["title"] ?? $current_title,
                             ) ?>"
                             class="w-full text-2xl font-bold bg-transparent border-b border-gray focus:outline-none focus:border-primary pb-0.5"
                         >
@@ -223,22 +223,22 @@ if ($_POST) {
                     <div class="relative rounded-lg overflow-hidden bg-offwhite aspect-video">
                         <img
                             id="image-preview-img"
-                            src="<?= $currentImage
+                            src="<?= $current_image
                                 ? htmlspecialchars(
                                     BASE . "/uploads/" . $currentImage,
                                 )
                                 : "" ?>"
-                            data-original-src="<?= $currentImage
+                            data-original-src="<?= $current_image
                                 ? htmlspecialchars(
-                                    BASE . "/uploads/" . $currentImage,
+                                    BASE . "/uploads/" . $current_image,
                                 )
                                 : "" ?>"
                             alt="Post image"
-                            class="w-full h-full object-cover<?= $currentImage
+                            class="w-full h-full object-cover<?= $current_image
                                 ? ""
                                 : " hidden" ?>"
                         >
-                        <div id="image-placeholder" class="<?= $currentImage
+                        <div id="image-placeholder" class="<?= $current_image
                             ? "hidden"
                             : "flex" ?> w-full h-full flex-col items-center justify-center gap-2 text-gray">
                             <?= icon("image", "w-8 h-8") ?>
@@ -247,7 +247,7 @@ if ($_POST) {
                         <button
                             type="button"
                             id="image-x-btn"
-                            class="<?= $currentImage
+                            class="<?= $current_image
                                 ? ""
                                 : "hidden" ?> absolute top-2 right-2 p-1.5 bg-white rounded-lg border border-gray hover:bg-offwhite transition-colors cursor-pointer shadow-sm"
                         >
@@ -273,12 +273,12 @@ if ($_POST) {
                         Cancel
                     </button>
                     <input type="hidden" id="delete-image-flag" name="delete-image" value="">
-                    <div id="image-error" class="<?= $imageError
+                    <div id="image-error" class="<?= $image_error
                         ? "flex"
                         : "hidden" ?> items-center gap-1.5 text-xs text-error">
                         <?= icon("alert-circle", "w-4 h-4 shrink-0") ?>
                         <span id="error-text"><?= htmlspecialchars(
-                            $imageError,
+                            $image_error,
                         ) ?></span>
                     </div>
                 </div>
@@ -387,12 +387,12 @@ if ($_POST) {
                     })();
                 </script>
 
-                <div id="content-view" class="<?= $isEditing
+                <div id="content-view" class="<?= $is_editing
                     ? "hidden"
                     : "flex" ?> flex-col gap-1">
                     <div class="flex items-start gap-2">
                         <p id="content-display" class="text-sm whitespace-pre-wrap flex-1"><?= htmlspecialchars(
-                            $saved["content"] ?? $currentContent,
+                            $saved["content"] ?? $current_content,
                         ) ?></p>
                         <button type="button" id="edit-content-btn" class="p-1 text-gray hover:text-black transition-colors cursor-pointer shrink-0">
                             <?= icon("pencil", "w-4 h-4") ?>
@@ -400,7 +400,7 @@ if ($_POST) {
                     </div>
                 </div>
 
-                <div id="content-edit" class="<?= $isEditing
+                <div id="content-edit" class="<?= $is_editing
                     ? "flex"
                     : "hidden" ?> flex-col gap-1">
                     <textarea
@@ -410,7 +410,7 @@ if ($_POST) {
                         required
                         class="border border-gray rounded-lg px-3 py-2 bg-offwhite focus:outline-none focus:border-primary resize-none"
                     ><?= htmlspecialchars(
-                        $saved["content"] ?? $currentContent,
+                        $saved["content"] ?? $current_content,
                     ) ?></textarea>
                     <div class="flex gap-2">
                         <button type="button" id="save-content-btn" class="self-start text-xs font-semibold px-2.5 py-1 rounded-md bg-primary hover:opacity-90 transition-opacity cursor-pointer">Save</button>

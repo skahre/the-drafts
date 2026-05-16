@@ -2,7 +2,7 @@
 // Getting all necessary files and data
 require_once "utils/bases.php";
 require_once "components/icons.php";
-require_once "components/profileImage.php";
+require_once "components/profile-image.php";
 require_once "db/db.php";
 
 // Fetch all posts from the database

@@ -9,28 +9,28 @@ if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
     exit();
 }
 
-$postRedirectUrl = BASE . "/admin/dashboard.php";
+$post_redirect_url = BASE . "/admin/dashboard.php";
 
 if ($_GET["id"]) {
-    $postId = $_GET["id"];
-    $post = get_post_by_id($postId);
+    $post_id = $_GET["id"];
+    $post = get_post_by_id($post_id);
     if (!$post) {
         header("Location: $postRedirectUrl");
         exit();
     }
     if ($post["user_id"] !== $_SESSION["user_id"]) {
-        $authRedirectUrl =
+        $auth_redirect_url =
             BASE .
             "/blog.php?id=" .
             $post["user_id"] .
             "&post_id=" .
             $post["id"];
-        header("Location: $authRedirectUrl");
+        header("Location: $auth_redirect_url");
         exit();
     }
-    $image = get_image_by_post($postId);
+    $image = get_image_by_post($post_id);
 } else {
-    header("Location: $postRedirectUrl");
+    header("Location: $post_redirect_url");
     exit();
 }
 
