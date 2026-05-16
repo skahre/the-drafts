@@ -30,7 +30,7 @@ if ($_POST) {
             header("Location: new-post.php");
             exit();
         }
-    } else {
+    } elseif ($image && $image["error"] !== 4) {
         $upload_errors = [
             0 => "No error, the file uploaded successfully.",
             1 => "Image too big (PHP limit).",
