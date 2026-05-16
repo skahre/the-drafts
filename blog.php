@@ -31,7 +31,7 @@ if ($post_id) {
 
 $info_user = [
     "profile_image" => $blogger["profile_image"] ?? null,
-    "name" => $blogger["title"] ?? "Unknown Blogger",
+    "name" => $blogger["title"] ?? $blogger["username"],
     "username" => $blogger["username"] ?? "place_holder",
     "bio" => $blogger["presentation"] ?? null,
 ];
