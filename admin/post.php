@@ -15,7 +15,7 @@ if ($_GET["id"]) {
     $post_id = $_GET["id"];
     $post = get_post_by_id($post_id);
     if (!$post) {
-        header("Location: $postRedirectUrl");
+        header("Location: $post_redirect_url");
         exit();
     }
     if ($post["user_id"] !== $_SESSION["user_id"]) {

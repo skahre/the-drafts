@@ -53,7 +53,7 @@ if ($_POST) {
 
     if ($title !== "" && $content !== "") {
         $post_id = add_post($_SESSION["user_id"], $title, $content);
-        if ($postId instanceof Exception) {
+        if ($post_id instanceof Exception) {
             $_SESSION["error"] = "Something went wrong while saving the post.";
             header("Location: new-post.php");
             exit();

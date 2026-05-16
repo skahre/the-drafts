@@ -56,7 +56,7 @@ if ($_POST) {
     if ($image && $image["error"] === 0) {
         try {
             $filename = upload_image($image, __DIR__ . "/../uploads/");
-            delete_image($current_mage, __DIR__ . "/../uploads/");
+            delete_image($current_image, __DIR__ . "/../uploads/");
         } catch (RuntimeException $e) {
             $_SESSION["error"] = $e->getMessage();
             $_SESSION["form"] = ["title" => $title, "content" => $content];
@@ -142,7 +142,7 @@ if ($_POST) {
                 enctype="multipart/form-data"
                 class="flex flex-col gap-4"
             >
-                <div id="title-view" class="<?= $isEditing
+                <div id="title-view" class="<?= $is_editing
                     ? "hidden"
                     : "flex" ?> items-center gap-2">
                     <h1 class="text-2xl font-bold"><?= htmlspecialchars(

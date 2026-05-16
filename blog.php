@@ -8,13 +8,11 @@ if ($_GET["id"]) {
     $blogger_id = $_GET["id"];
     $blogger = get_user_by_id($blogger_id);
     if (!$blogger) {
-        echo "wrong";
-        //header("Location: $redirect_url");
+        header("Location: $redirect_url");
         exit();
     }
 } else {
-    echo "hihi";
-    //header("Location: $redirect_url");
+    header("Location: $redirect_url");
     exit();
 }
 

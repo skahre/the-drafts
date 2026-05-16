@@ -1,9 +1,8 @@
-<?php
-$posts = get_posts_by_user($blogger_id); ?>
+
 <nav class="bg-white rounded-2xl p-4 flex flex-col gap-2">
     <h2 class="font-bold text-center">Posts</h2>
     <ul class="flex flex-col gap-1 list-none">
-        <?php foreach ($posts as $post_item): ?>
+        <?php foreach ($user_posts as $post_item): ?>
             <li>
                 <a href="<?= BASE ?>/blog.php?id=<?= htmlspecialchars(
     $blogger_id,

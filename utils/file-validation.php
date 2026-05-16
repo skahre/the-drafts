@@ -50,7 +50,7 @@ function upload_image($file, $upload_dir)
 function delete_image($filename, $upload_dir)
 {
     $file_path = $upload_dir . $filename;
-    if (file_exists($filePath)) {
+    if (file_exists($file_path)) {
         unlink($file_path);
     }
 }
